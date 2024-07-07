@@ -1,0 +1,63 @@
+{% extends "../base.html" %}
+{% block title %}
+New publication
+{% endblock title %}
+
+{% block header %}
+{% include "../header/header.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="new-publication-form">
+    <h2 class="new-publication-title">
+        New publication
+    </h2>
+    <hr>
+    <form class="form-block">
+        <div class="form-block-item">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text">
+        </div>
+        <div class="form-block-item">
+            <label for="description">Description</label>
+            <textarea name="description" id="description"></textarea>
+        </div>
+        <div class="form-block-item">
+            <div class="dropdown-wrapper new-publication-dropdown-wrapper">
+                <button type="button" class="new-publication-categories-btn">
+                    <a>
+                        Categories
+                    </a>
+                </button>
+                <div class="dropdown-for-btn new-publication-dropdown-for-btn dropdown-for-btn-hide">
+                    <div class="dropdown-for-btn-checkbox-item">
+                        <input type="checkbox" id="pub_ctgr_PIXELART">
+                        <label for="pub_ctgr_PIXELART">Pixelart</label>
+                    </div>
+                    <div class="dropdown-for-btn-checkbox-item">
+                        <input type="checkbox" id="pub_ctgr_GAMEDEV">
+                        <label for="pub_ctgr_GAMEDEV">Gamedev</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-block-item">
+            <label for="new-pub-images">Images</label>
+            <input multiple id="new-pub-images" name="images" type="file">
+        </div>
+        <div class="load-images" id="load-images">
+            <!-- <div class="load-image draggable" draggable="true">
+                <img src="/static/img/temp/2.jpg" alt="">
+            </div> -->
+        </div>
+        <button type="submit" class="publish-button">
+            <a>
+                Publish
+            </a>
+        </button>
+    </form>
+</div>
+
+
+
+{% endblock content %}

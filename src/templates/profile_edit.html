@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}
+Profile edit
+{% endblock title %}
+
+{% block header %}
+{% include "header/header.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="profile-edit-form">
+    <h2 class="profile-edit-form-title">
+        Profile edit
+    </h2>
+    <hr>
+    <form class="form-block">
+        <div class="form-block-item">
+            <label for="avatar">Avatar</label>
+            <input id="avatar" name="avatar" type="file">
+            <div class="form-block-item form-block-item-checkbox form-block-item-inner-checkbox">
+                <input id="delete_background" name="delete_background" type="checkbox">
+                <label for="delete_background">delete background</label>
+            </div>
+        </div>
+        <div class="form-block-item">
+            <label for="background">Background</label>
+            <input id="background" name="background" type="file">
+            <div class="form-block-item form-block-item-checkbox form-block-item-inner-checkbox">
+                <input id="delete_avatar" name="delete_avatar" type="checkbox">
+                <label for="delete_avatar">delete avatar</label>
+            </div>
+        </div>
+        <div class="form-block-item">
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text">
+        </div>
+        <div class="form-block-item">
+            <label for="description">Description</label>
+            <textarea name="description" id="description"></textarea>
+        </div>
+        <button class="save-profile-edit"><a>Save</a></button>
+    </form>
+</div>
+{% endblock content %}

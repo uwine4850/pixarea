@@ -1,0 +1,218 @@
+{% extends "../base.html" %}
+{% block title %}
+New publication
+{% endblock title %}
+
+{% block left_side %}
+<div class="pub-left-content">
+    <div class="pub-author-block">
+        <button class="profile-icon">
+            <a>
+                <img src="/static/img/temp/1.jpg" alt="">
+            </a>
+        </button>
+        <div class="pub-author-right">
+            <div class="pub-author-username">
+                renxob
+            </div>
+            <div class="pub-author-buttons">
+                <button class="pub-author-subscribe">
+                    <a>Subscribe</a>
+                </button>
+                <button class="pub-author-like">
+                    <a><img src="/static/img/icons/like.svg" alt=""></a>
+                </button>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="pub-description-block">
+        <h2 class="pub-name">
+            Project one
+        </h2>
+        <div class="pub-description">
+            There are many variations of 
+            passages of Lorem Ipsum available, 
+            but the majority have suffered alteration 
+            in some form, by injected humour, or randomised words.
+        </div>
+    </div>
+    <hr>
+    <div class="pub-info">
+        <div class="pub-info-categories">
+            <div class="pub-info-category">
+                Pixelart
+            </div>
+            <div class="pub-info-category">
+                3D ART
+            </div>
+        </div>
+        <div class="pub-info-with-icons">
+            <div class="pub-info-with-icons-item">
+                <img src="/static/img/icons/date.svg" alt="">
+                <div class="pub-info-with-icons-text">
+                    12.03.3004
+                </div>
+            </div>
+            <div class="pub-info-with-icons-item">
+                <img src="/static/img/icons/star.svg" alt="">
+                <div class="pub-info-with-icons-text">
+                    Best...
+                </div>
+            </div>
+            <div class="pub-info-with-icons-item">
+                <img src="/static/img/icons/like.svg" alt="">
+                <div class="pub-info-with-icons-text">
+                    244877
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="publication-images mini-publication-images">
+            <div class="publication-images-item">
+                <img src="/static/img/temp/1.jpg" alt="">
+            </div>
+            <div class="publication-images-item">
+                <img src="/static/img/temp/2.jpg" alt="">
+            </div>
+        </div>
+        <div class="previuos-publication-block">
+            <h3>Previuos publication</h3>
+            <div class="previuos-publication-list">
+                <button class="previuos-publication-item">
+                    <a href="">
+                        <img src="/static/img/temp/1.jpg" alt="">
+                    </a>
+                </button>
+            </div>
+        </div>
+        <hr>
+
+        <!-- COMMENTS -->
+        <div class="publication-comments-block">
+            <h3>Comments</h3>
+            <form action="" class="publication-comment-form">
+                <textarea name="publication-comment"></textarea>
+                <button class="send-publication-comment">
+                    Send
+                </button>
+            </form>
+            <div class="publication-comment-list">
+                <!-- HIDE CLASS publication-comment-item-hidden -->
+                <div class="publication-comment-item">
+                    <!-- ENABLE CLASS PCH-enable -->
+                    <button class="publication-comment-item-hidden-panel">
+                        <a>
+                            Hidden comment. Click to show comment.
+                        </a>
+                    </button>
+                    <div class="comment-user-info">
+                        <button class="profile-icon profile-icon-comment">
+                            <a>
+                                <img src="/static/img/temp/1.jpg" alt="">
+                            </a>
+                        </button>
+                        <div class="comment-user-username">
+                            renxob
+                        </div>
+                        {% include "./pub_comm_menu.html" %}
+                    </div>
+                    <div class="comment-content">
+                        There are many variations of passages 
+                        of Lorem Ipsum available, but the majority 
+                        have suffered alteration in some form, by 
+                        injected humour, or randomised words which
+                    </div>
+                    <div class="comment-footer">
+                        <button class="reply-button">
+                            Reply
+                        </button>
+                        <button class="comment-open-close-reply">
+                            <a>
+                                Answers
+                                <img src="/static/img/icons/expand_right.svg" alt="">
+                            </a>
+                        </button>
+                    </div>
+                </div>
+                <div class="publication-comment-item">
+                    <button class="publication-comment-item-hidden-panel">
+                        <a>
+                            Hidden comment. Click to show comment.
+                        </a>
+                    </button>
+                    <div class="comment-user-info">
+                        <button class="profile-icon profile-icon-comment">
+                            <a>
+                                <img src="/static/img/temp/1.jpg" alt="">
+                            </a>
+                        </button>
+                        <div class="comment-user-username">
+                            renxob
+                        </div>
+                        {% include "./pub_comm_menu.html" %}
+                    </div>
+                    <div class="comment-content">
+                        There are many variations of passages 
+                        of Lorem Ipsum available, but the majority 
+                        have suffered alteration in some form, by 
+                        injected humour, or randomised words which
+                    </div>
+                    <button class="reply-button">
+                        Reply
+                    </button>
+
+                    <div class="publication-comment-item publication-comment-item-reply">
+                        <button class="publication-comment-item-hidden-panel">
+                            <a>
+                                Hidden comment. Click to show comment.
+                            </a>
+                        </button>
+                        <div class="comment-user-info">
+                            <button class="profile-icon profile-icon-comment">
+                                <a>
+                                    <img src="/static/img/temp/1.jpg" alt="">
+                                </a>
+                            </button>
+                            <div class="comment-user-username">
+                                renxob
+                            </div>
+                            {% include "./pub_comm_menu.html" %}
+                        </div>
+                        <div class="comment-content">
+                            There are many variations of passages 
+                            of Lorem Ipsum available, but the majority 
+                            have suffered alteration in some form, by 
+                            injected humour, or randomised words which
+                        </div>
+                        <hr>
+                    </div>
+                    
+                    <div class="comment-footer">
+                        <button class="comment-open-close-reply">
+                            <a>
+                                Answers 345
+                                <img src="/static/img/icons/expand_right.svg" alt="">
+                            </a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock left_side %}
+
+{% block right_side %}
+<div class="separate-content-right separate-content-right-publication">
+    {% include "../header/header.html" %}
+    <div class="publication-images">
+        <div class="publication-images-item">
+            <img src="/static/img/temp/1.jpg" alt="">
+        </div>
+        <div class="publication-images-item">
+            <img src="/static/img/temp/2.jpg" alt="">
+        </div>
+    </div>
+</div>
+{% endblock right_side %}

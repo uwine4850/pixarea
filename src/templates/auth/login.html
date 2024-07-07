@@ -1,0 +1,29 @@
+{% extends "../base.html" %}
+{% block title %}
+Register
+{% endblock title %}
+
+{% block content %}
+<form class="auth-panel">
+    <h2 class="auth-panel-title">
+        Register
+    </h2>
+    <hr>
+    <div class="form-block form-block-auth">
+        <div class="form-block-item">
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text">
+        </div>
+        <div class="form-block-item">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="text">
+        </div>
+    </div>
+    <a href="/register" class="auth-support-link">Register</a>
+    <button class="auth-button">
+        <a>
+            Login
+        </a>
+    </button>
+</form>
+{% endblock content %}

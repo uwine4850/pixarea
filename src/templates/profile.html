@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}
+Profile
+{% endblock title %}
+
+{% block left_side %}
+<div class="separate-content-left separate-content-left-profile" id="separate-content-left-profile">
+    <div class="profile-wrap">
+        <div class="profile-bg-avatar">
+            <div class="profile-bg-avatar-blur"></div>
+            <img src="/static/img/temp/2.jpg" alt="">
+            <button class="profile-edit-button">
+                <a href="">
+                    <img src="/static/img/icons/edit.svg" alt="">
+                </a>
+            </button>
+            <div class="profile-avatar">
+                <img src="/static/img/temp/1.jpg" alt="">
+            </div>
+        </div>
+        <div class="profile-description">
+            <div class="profile-id">
+                <div class="profile-id-username">
+                    renxob
+                </div>
+                <div class="profile-id-uniq-username">
+                    @renxob
+                </div>
+            </div>
+            <div class="profile-description-text">
+                It is a long established fact that a 
+                reader will be distracted by the readable 
+                content of a page when looking at its layout. 
+                The point of using Lorem Ipsum.
+            </div>
+            <hr class="profile-hr">
+            <div class="profile-info">
+                <div class="profile-info-item">
+                    <div class="profile-info-item-title">
+                        Publications
+                    </div>
+                    <div class="profile-info-item-value">
+                        3573
+                    </div>
+                </div>
+                <div class="profile-info-item">
+                    <div class="profile-info-item-title">
+                        Subscribers
+                    </div>
+                    <div class="profile-info-item-value">
+                        1.2m
+                    </div>
+                </div>
+                <div class="profile-info-item">
+                    <div class="profile-info-item-title">
+                        Likes
+                    </div>
+                    <div class="profile-info-item-value">
+                        13.5m
+                    </div>
+                </div>
+            </div>
+            <hr class="profile-hr">
+            <div class="profile-buttons">
+                <button class="profile-button">
+                    <a>
+                        Subscribe
+                    </a>
+                </button>
+                <button class="profile-button profile-button-open-publication" id="profile-button-open-publication">
+                    <a>
+                        Publications
+                    </a>
+                </button>
+            </div>
+            <hr class="profile-hr">
+            <div class="profile-pin-publication">
+                <div class="profile-pin-publication-text">
+                    Text for pin item
+                </div>
+                <button class="profile-pin-publication-pub">
+                    <a href="" class="profile-pin-publication-unpin-btn">
+                        <img src="/static/img/icons/pin.svg" alt="">
+                    </a>
+                    <a href="">
+                        <img src="/static/img/temp/2.jpg" alt="">
+                    </a>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock left_side %}
+
+{% block right_side %}
+<div class="separate-content-right separate-content-right-profile separate-content-right-profile-hide" id="separate-content-right-profile">
+    <div class="separate-content-right-header">
+        {% include "header/prof_header.html" %}
+    </div>
+    <div class="separate-content-right-content">
+        <div class="collections-list">
+            <button class="collection-item">
+                <a href="">
+                    <div class="collection-item-image">
+                        <img src="/static/img/temp/2.jpg" alt="">
+                    </div>
+                    <div class="collection-item-name">
+                        Coll name
+                    </div>
+                </a>
+            </button>
+            <button class="collection-item">
+                <a href="">
+                    <div class="collection-item-image">
+                        <img src="/static/img/temp/2.jpg" alt="">
+                    </div>
+                    <div class="collection-item-name">
+                        Coll name
+                    </div>
+                </a>
+            </button>
+            <button class="collection-item">
+                <a href="">
+                    <div class="collection-item-image">
+                        <img src="/static/img/temp/1.jpg" alt="">
+                    </div>
+                    <div class="collection-item-name">
+                        Coll name
+                    </div>
+                </a>
+            </button>
+            <button class="collection-item">
+                <a href="">
+                    <div class="collection-item-image">
+                        <img src="/static/img/temp/1.jpg" alt="">
+                    </div>
+                    <div class="collection-item-name">
+                        Coll name
+                    </div>
+                </a>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock right_side %}

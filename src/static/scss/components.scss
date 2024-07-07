@@ -1,0 +1,132 @@
+@import "./mixin.scss";
+
+// DROPDOWN
+.dropdown-wrapper{
+    border-radius: 4px;
+    position: relative;
+    height: 100%;
+    display: inline-block;
+    .dropdown-for-btn{
+        z-index: 10;
+        top: 60px;
+        right: 0;
+        background: $color_button;
+        padding: 10px;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        width: fit-content;
+        .dropdown-for-btn-checkbox-item{
+            display: flex;
+            label{
+                font-size: 1rem;
+                margin-left: 10px;
+                white-space: nowrap;
+            }
+            margin-bottom: 10px;
+        }
+        .dropdown-for-btn-checkbox-item:last-child{
+            margin-bottom: 0;
+        }
+        .dropdown-for-btn-linkBtn-item{
+            @include mx_button($color_button);
+            padding: 5px 0;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            width: 100%;
+            a{
+                justify-content: left;
+                align-items: left;
+            }
+        }
+        .dropdown-for-btn-linkBtn-item:last-child{
+            margin-bottom: 0;
+        }
+    }
+    .dropdown-for-btn-hide{
+        display: none;
+    }
+}
+
+// PROFILE ICON
+.profile-icon{
+    @include mx_button($color_button);
+    min-width: 50px;
+    height: 50px;
+    overflow: hidden;
+    border-radius: 50%;
+    a{
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+}
+
+// SEARCH
+.search{
+    margin: auto 0 auto 1vw;
+    display: flex;
+    padding: 0 0 0 20px;
+    border-radius: 50px;
+    background-color: $color_accent_1;
+    height: 100%;
+    width: 100%;
+    input{
+        @include mx_def_input;
+        font-size: 1.2rem;
+        background-color: transparent;
+        font-family: $fort_chivo;
+        width: 100%;
+    }
+    button{
+        @include mx_def_button;
+        background-color: transparent;
+        border-radius: 0 50px 50px 0;
+        padding: 0 0.5rem 0 0.2rem;
+        transition: .1s;
+        &:hover{
+            cursor: pointer;
+            img{
+                transform: scale(105%);
+            }
+        }
+        img{
+            width: 2rem;
+        }
+    }
+}
+
+// POPUP
+.popup-wrapper{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 200;
+    display: flex;
+    .popup{
+        margin: 70px auto 0 auto;
+        width: 40%;
+        height: 100px;
+        background: #e50808;
+        z-index: 210;
+    }
+    .popup-bg{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: #00000056;
+    }
+}
+
+.popup-hide{
+    display: none;
+}

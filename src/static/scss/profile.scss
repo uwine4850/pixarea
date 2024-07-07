@@ -1,0 +1,331 @@
+@import "./mixin.scss";
+
+.separate-content-left-profile{
+    width: 500px;
+    background-color: $color_bacground1;
+    .profile-wrap{
+        width: 100%;
+        height: 100%;
+        .profile-bg-avatar{
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+            .profile-bg-avatar-blur{
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(2px);
+            }
+            .profile-edit-button{
+                @include mx_button($color_transparent_bg);
+                position: absolute;
+                right: 10px;
+                top: 10px;
+                border-radius: 50%;
+                a{
+                    padding: 5px;
+                }
+            }
+            img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .profile-avatar{
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 100px;
+                height: 100px;
+                overflow: hidden;
+                border-radius: 50%;
+            }
+        }
+    }
+}
+
+.separate-content-left-profile-hide{
+    display: none;
+}
+
+.profile-description{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 10px;
+    box-sizing: border-box;
+    padding: 0 10px;
+    overflow-y: scroll;
+    height: calc(100% - 260px);
+    .profile-hr{
+        margin: 10px 0;
+    }
+    .profile-id{
+        font-family: $fort_chivo;
+        display: flex;
+        margin: 0 auto;
+        font-size: 1.5rem;
+        .profile-id-username{
+            font-weight: 500;
+        }
+        .profile-id-uniq-username{
+            margin-left: 10px;
+            font-style: italic;
+            color: $color_secondary_text;
+        }
+    }
+    .profile-description-text{
+        margin-top: 10px;
+        background-color: $color_bacground2;
+        box-sizing: border-box;
+        padding: 10px;
+        font-size: 1.1rem;
+        border-radius: 4px;
+    }
+    .profile-info{
+        display: flex;
+        justify-content: space-between;
+        .profile-info-item{
+            display: flex;
+            flex-direction: column;
+            font-size: 1.2rem;
+            .profile-info-item-title{
+                font-weight: 500;
+                margin: 0 auto;
+            }
+            .profile-info-item-value{
+                font-family: $fort_chivo;
+                margin: 0 auto;
+            }
+        }
+    }
+    .profile-buttons{
+        display: flex;
+        width: 100%;
+        .profile-button{
+            @include mx_button($color_button);
+            width: 100%;
+            height: 40px;
+            border-radius: 4px;
+            a{
+                margin: 0 auto;
+                font-size: 1.2rem;
+            }
+            margin-left: 10px;
+        }
+        .profile-button:first-child{
+            margin-left: 0;
+        }
+        .profile-button-open-publication{
+            display: none;
+        }
+    }
+    .profile-pin-publication{
+        display: flex;
+        flex-direction: column;
+        .profile-pin-publication-text{
+            font-size: 1.2rem;
+        }
+        .profile-pin-publication-pub{
+            @include mx_button(transparent);
+            margin-top: 10px;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            position: relative;
+            a{
+                padding: 0;
+                img{
+                    aspect-ratio: 1/1;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
+            .profile-pin-publication-unpin-btn{
+                position: absolute;
+                width: 50px;
+                height: 50px;
+                background-color: $color_transparent_bg;
+                top: 10px;
+                right: 10px;
+                border-radius: 50%;
+                box-sizing: border-box;
+                padding: 5px;
+                &:hover{
+                    background-color: $color_button_hover;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}
+
+.separate-content-right-profile{
+    display: flex;
+    flex-direction: column;
+    .separate-content-right-header{
+        width: 100%;
+    }
+    .separate-content-right-content{
+        margin-top: 10px;
+        width: 100%;
+        height: calc(100vh - 70px);
+        overflow-y: scroll;
+    }
+}
+
+.separate-content-right-profile-hide{
+    display: flex;
+}
+
+.profile-header-back{
+    @include mx_button($color_button);
+    position: absolute;
+    top: 85px;
+    left: 15px;
+    display: none;
+    margin-right: 10px;
+    border-radius: 50%;
+    a{
+        padding: 0;
+        aspect-ratio: 1/1;
+    }
+}
+
+.collections-list{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    box-sizing: border-box;
+    padding: 0 10px;
+    .collection-item{
+        @include mx_button(transparent);
+        &:hover{
+            background-color: transparent;
+            cursor: pointer;
+            transform: scale(101%);
+        }
+        a{
+            flex-direction: column;
+            padding: 0;
+            .collection-item-image{
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                border-radius: 4px;
+                img{
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    aspect-ratio: 2/1;
+                }
+            }
+            .collection-item-name{
+                margin: 5px auto 0 auto;
+                font-size: 1.2rem;
+                font-weight: 500;
+    
+            }
+        }
+    }
+}
+
+// PROFILE EDIT
+.profile-edit-form{
+    background-color: $color_bacground1;
+    border-radius: 4px 4px 0 0;
+    width: 50%;
+    margin: 0 auto;
+    height: calc(100vh - 70px);
+    overflow-y: scroll;
+    box-sizing: border-box;
+    padding: 10px;
+    .profile-edit-form-title{
+        margin-bottom: 5px;
+    }
+    .save-profile-edit{
+        @include mx_button($color_button);
+        margin-left: auto;
+        margin-top: 10px;
+        font-size: 1.2rem;
+        padding: 10px;
+        border-radius: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .separate-content-right-profile-hide{
+        display: none;
+    }
+    .separate-content-left-profile{
+        width: 100%;
+    }
+    .profile-description .profile-buttons .profile-button-open-publication{
+        display: block;
+    }
+    .profile-header-back{
+        display: block;
+    }
+    .profile-edit-form{
+        width: 100%;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .separate-content-right-profile-hide{
+        display: none;
+    }
+    .separate-content-left-profile{
+        width: 100%;
+    }
+    .profile-info{
+        padding: 0 50px;
+    }
+    .profile-description .profile-buttons .profile-button{
+        height: 60px;
+    }
+    .profile-description .profile-buttons .profile-button-open-publication{
+        display: block;
+    }
+    .profile-header-back{
+        display: block;
+    }
+    .profile-edit-form{
+        width: 100%;
+    }
+}
+
+@media (min-width: 650px) and (max-width: 768px) {
+    .profile-info{
+        padding: 0 100px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .default-heder-media{
+        display: none;
+    }
+    .mini-header{
+        display: flex;
+    }
+    .separate-content-left-profile{
+        width: 600px;
+    }
+    .profile-description .profile-buttons .profile-button{
+        height: 60px;
+    }
+    .profile-edit-form{
+        width: 90%;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1200px) {
+    .profile-edit-form{
+        width: 70%;
+    }
+}

@@ -1,0 +1,33 @@
+<header class="default-heder default-heder-media">
+    <div class="header-center">
+        {% include "profile.html" %}
+        <button class="header-btn"><a href="#">Explore</a></button>
+        <button class="header-btn btn-active"><a href="#">Subscribed</a></button>
+        {% include "search.html" %}
+        {% include "dropdown_buttons.html" %}
+    </div>
+</header>
+<!-- MINI HEADER -->
+<header class="default-heder mini-header">
+    <div class="header-center mini-header-center">
+        <div class="mini-header-side" id="mhs1">
+            {% include "profile.html" %}
+            <button class="header-btn"><a href="#">Explore</a></button>
+            <button class="header-btn btn-active"><a href="#">Subscribed</a></button>
+            <button class="mini-header-search-btn" id="mini-header-search-btn">
+                <a href="#">
+                    <img src="/static/img/icons/search.svg" alt="">
+                </a>
+            </button>
+        </div>
+        <div class="mini-header-side mini-header-side-hide" id="mhs2">
+            <button class="mini-header-close-search" id="mini-header-close-search">
+                <a href="#">
+                    <img src="/static/img/icons/close.svg" alt="">
+                </a>
+            </button>
+            {% include "search.html" %}
+            {% include "dropdown_buttons.html" %}
+        </div>
+    </div>
+</header>
