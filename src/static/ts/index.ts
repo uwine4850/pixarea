@@ -3,6 +3,7 @@ import { Dropdown, closeDropdown } from "./dropdown";
 import "./base";
 import "./profile";
 import { publicationRunDropdown, newPublicationRunDropdown } from "./publication";
+import { RemoveUrlParameters } from "./routerutils/utils";
 
 let drpd = new Dropdown("header-btn-dropdown");
 drpd.run();
@@ -16,3 +17,5 @@ document.addEventListener('click', (event) => {
     closeDropdown(pubDrpd, clickTarget);
     closeDropdown(newPubDrpd, clickTarget);
 });
+
+RemoveUrlParameters(["REDIRECT_ERROR"]);

@@ -1,12 +1,14 @@
 {% extends "../base.html" %}
 {% block title %}
-Register
+Login
 {% endblock title %}
 
 {% block content %}
-<form class="auth-panel">
+<form class="auth-panel" method="post" action="/login-post" enctype="application/x-www-form-urlencoded">
+    {{ csrf_token|safe }}
+    <div class="error">{{ REDIRECT_ERROR }}</div>
     <h2 class="auth-panel-title">
-        Register
+        Login
     </h2>
     <hr>
     <div class="form-block form-block-auth">
@@ -20,7 +22,7 @@ Register
         </div>
     </div>
     <a href="/register" class="auth-support-link">Register</a>
-    <button class="auth-button">
+    <button type="submit" class="auth-button">
         <a>
             Login
         </a>

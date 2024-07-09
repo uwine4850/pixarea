@@ -20,6 +20,11 @@ body{
     background-color: $color_accent_1;
 }
 
+.error{
+    color: red;
+    font-size: 1.2rem;
+}
+
 .default-heder{
     display: flex;
     height: 70px;

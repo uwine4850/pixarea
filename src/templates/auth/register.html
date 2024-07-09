@@ -4,7 +4,9 @@ Register
 {% endblock title %}
 
 {% block content %}
-<form class="auth-panel">
+<form class="auth-panel" method="post" action="register-post" enctype="application/x-www-form-urlencoded">
+    {{ csrf_token|safe }}
+    <div class="error">{{ REDIRECT_ERROR }}</div>
     <h2 class="auth-panel-title">
         Register
     </h2>
@@ -23,12 +25,12 @@ Register
             <input id="password" name="password" type="text">
         </div>
         <div class="form-block-item">
-            <label for="password_again">Repeat password</label>
-            <input id="password_again" name="password_again" type="text">
+            <label for="repeat_password">Repeat password</label>
+            <input id="repeat_password" name="repeat_password" type="text">
         </div>
     </div>
     <a href="/login" class="auth-support-link">Login</a>
-    <button class="auth-button">
+    <button type="submit" class="auth-button">
         <a>
             Register
         </a>
