@@ -5,10 +5,12 @@ import (
 
 	"github.com/uwine4850/foozy/pkg/builtin/auth"
 	"github.com/uwine4850/foozy/pkg/database"
+	"github.com/uwine4850/foozy/pkg/database/dbutils"
 	"github.com/uwine4850/foozy/pkg/interfaces"
 	"github.com/uwine4850/foozy/pkg/router"
 	"github.com/uwine4850/foozy/pkg/router/form"
 	"github.com/uwine4850/pixarea/src/cnf"
+	"github.com/uwine4850/pixarea/src/cnf/pnames"
 	"github.com/uwine4850/pixarea/src/utils/formutils"
 )
 
@@ -42,7 +44,11 @@ func LoginPostHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IM
 			router.RedirectError(w, r, "/login", err.Error(), manager)
 		}
 	}()
-	if err := loginUser(w, db, manager, loginForm); err != nil {
+	_auth := auth.NewAuth(db, w, manager)
+	if err := loginUser(_auth, loginForm); err != nil {
+		return func() { router.RedirectError(w, r, "/login", err.Error(), manager) }
+	}
+	if err := userCookies(w, _auth, db, loginForm.Username[0]); err != nil {
 		return func() { router.RedirectError(w, r, "/login", err.Error(), manager) }
 	}
 	return func() { http.Redirect(w, r, "/explore", http.StatusFound) }
@@ -60,10 +66,34 @@ func parseForm(r *http.Request) (*form.FillableFormStruct, error) {
 	return fillLoginForm, nil
 }
 
-func loginUser(w http.ResponseWriter, db *database.Database, manager interfaces.IManager, loginForm *LoginForm) error {
-	_auth := auth.NewAuth(db, w, manager)
+func loginUser(_auth *auth.Auth, loginForm *LoginForm) error {
 	if _, err := _auth.LoginUser(loginForm.Username[0], loginForm.Password[0]); err != nil {
 		return err
 	}
 	return nil
+}
+
+func userCookies(w http.ResponseWriter, _auth *auth.Auth, db *database.Database, username string) error {
+	authUser, err := _auth.UserExist(username)
+	if err != nil {
+		return err
+	}
+	user, err := db.SyncQ().Select([]string{"avatar"}, "user", dbutils.WHEquals(map[string]interface{}{"auth": authUser["id"]}, ""), 1)
+	if err != nil {
+		return err
+	}
+	newCookie(w, pnames.COOKIE_USER_USERNAME, username)
+	newCookie(w, pnames.COOKIE_USER_AVATAR, dbutils.ParseString(user[0]["avatar"]))
+	return nil
+}
+
+func newCookie(w http.ResponseWriter, name string, value string) {
+	c := &http.Cookie{
+		Name:     name,
+		Value:    value,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+	}
+	http.SetCookie(w, c)
 }

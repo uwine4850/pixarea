@@ -5,7 +5,7 @@ Login
 
 {% block content %}
 <form class="auth-panel" method="post" action="/login-post" enctype="application/x-www-form-urlencoded">
-    {{ csrf_token|safe }}
+    {{ CSRF_TOKEN|safe }}
     <div class="error">{{ REDIRECT_ERROR }}</div>
     <h2 class="auth-panel-title">
         Login

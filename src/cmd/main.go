@@ -16,7 +16,9 @@ import (
 	"github.com/uwine4850/pixarea/src/cnf"
 	"github.com/uwine4850/pixarea/src/handlers"
 	"github.com/uwine4850/pixarea/src/handlers/hauth"
-	"github.com/uwine4850/pixarea/src/middlewares/authmddl"
+	"github.com/uwine4850/pixarea/src/handlers/hprofile"
+	"github.com/uwine4850/pixarea/src/handlers/tmplfilters"
+	"github.com/uwine4850/pixarea/src/middlewares/usermddl"
 )
 
 func main() {
@@ -28,14 +30,16 @@ func main() {
 		}
 	}(db)
 	mddl := middlewares.NewMiddleware()
-	mddl.HandlerMddl(0, authmddl.UpdKeys(db))
+	// mddl.HandlerMddl(0, authmddl.UpdKeys(db))
 	mddl.HandlerMddl(1, builtin_mddl.GenerateAndSetCsrf)
-	mddl.HandlerMddl(2, authmddl.AuthPermissions)
+	// mddl.HandlerMddl(2, authmddl.AuthPermissions)
+	mddl.AsyncHandlerMddl(usermddl.ParseUserCookies)
 
 	render, err := tmlengine.NewRender()
 	if err != nil {
 		panic(err)
 	}
+	tmplfilters.RegisterFilters()
 
 	newManager := manager.NewManager(render)
 	newManager.Config().Debug(true)
@@ -47,14 +51,14 @@ func main() {
 
 	newRouter.GetMux().Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("src/static"))))
 	newRouter.Get("/explore", handlers.ExploreHNDL)
-	newRouter.Get("/profile", handlers.ProfileHNDL)
+	newRouter.Get("/profile/<id>", hprofile.ObjectProfileViewHNDL())
 	newRouter.Get("/profile/edit", handlers.ProfileEditHNDL)
 	newRouter.Get("/logout", hauth.LogOutHNDL)
 	newRouter.Get("/login", hauth.LoginHNDL)
 	newRouter.Post("/login-post", hauth.LoginPostHNDL)
 	newRouter.Get("/register", hauth.RegisterHNDL)
 	newRouter.Post("/register-post", hauth.RegisterPostHNDL)
-	newRouter.Get("/publication", handlers.PublicationViewHNDL)
+	newRouter.Get("/publication/test", handlers.PublicationViewHNDL)
 	newRouter.Get("/new-publication", handlers.NewPublicationHNDL)
 
 	gf := globalflow.NewGlobalFlow(10)
