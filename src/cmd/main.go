@@ -18,6 +18,7 @@ import (
 	"github.com/uwine4850/pixarea/src/handlers/hauth"
 	"github.com/uwine4850/pixarea/src/handlers/hprofile"
 	"github.com/uwine4850/pixarea/src/handlers/tmplfilters"
+	"github.com/uwine4850/pixarea/src/middlewares/authmddl"
 	"github.com/uwine4850/pixarea/src/middlewares/usermddl"
 )
 
@@ -30,9 +31,9 @@ func main() {
 		}
 	}(db)
 	mddl := middlewares.NewMiddleware()
-	// mddl.HandlerMddl(0, authmddl.UpdKeys(db))
+	mddl.HandlerMddl(0, authmddl.UpdKeys(db))
 	mddl.HandlerMddl(1, builtin_mddl.GenerateAndSetCsrf)
-	// mddl.HandlerMddl(2, authmddl.AuthPermissions)
+	mddl.HandlerMddl(2, authmddl.AuthPermissions)
 	mddl.AsyncHandlerMddl(usermddl.ParseUserCookies)
 
 	render, err := tmlengine.NewRender()

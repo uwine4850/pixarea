@@ -8,6 +8,7 @@ import (
 	"github.com/uwine4850/foozy/pkg/database/dbutils"
 	"github.com/uwine4850/foozy/pkg/interfaces"
 	"github.com/uwine4850/foozy/pkg/router"
+	"github.com/uwine4850/foozy/pkg/router/cookies"
 	"github.com/uwine4850/foozy/pkg/router/form"
 	"github.com/uwine4850/pixarea/src/cnf"
 	"github.com/uwine4850/pixarea/src/cnf/pnames"
@@ -23,7 +24,7 @@ func LoginHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IManag
 	router.CatchRedirectError(r, manager)
 	manager.Render().SetTemplatePath("src/templates/auth/login.html")
 	if err := manager.Render().RenderTemplate(w, r); err != nil {
-		return func() { router.ServerError(w, err.Error(), manager.Config()) }
+		return func() { router.ServerError(w, err.Error(), manager) }
 	}
 	return func() {}
 }
@@ -48,7 +49,7 @@ func LoginPostHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IM
 	if err := loginUser(_auth, loginForm); err != nil {
 		return func() { router.RedirectError(w, r, "/login", err.Error(), manager) }
 	}
-	if err := userCookies(w, _auth, db, loginForm.Username[0]); err != nil {
+	if err := userCookies(w, _auth, loginForm.Username[0]); err != nil {
 		return func() { router.RedirectError(w, r, "/login", err.Error(), manager) }
 	}
 	return func() { http.Redirect(w, r, "/explore", http.StatusFound) }
@@ -73,27 +74,16 @@ func loginUser(_auth *auth.Auth, loginForm *LoginForm) error {
 	return nil
 }
 
-func userCookies(w http.ResponseWriter, _auth *auth.Auth, db *database.Database, username string) error {
-	authUser, err := _auth.UserExist(username)
+func userCookies(w http.ResponseWriter, _auth *auth.Auth, username string) error {
+	authUser, err := _auth.UserByUsername(username)
 	if err != nil {
 		return err
 	}
-	user, err := db.SyncQ().Select([]string{"avatar"}, "user", dbutils.WHEquals(map[string]interface{}{"auth": authUser["id"]}, ""), 1)
+	user, err := _auth.UserByID(authUser["id"])
 	if err != nil {
 		return err
 	}
-	newCookie(w, pnames.COOKIE_USER_USERNAME, username)
-	newCookie(w, pnames.COOKIE_USER_AVATAR, dbutils.ParseString(user[0]["avatar"]))
+	cookies.SetStandartCookie(w, pnames.COOKIE_USER_USERNAME, username, "/", 0)
+	cookies.SetStandartCookie(w, pnames.COOKIE_USER_AVATAR, dbutils.ParseString(user["avatar"]), "/", 0)
 	return nil
-}
-
-func newCookie(w http.ResponseWriter, name string, value string) {
-	c := &http.Cookie{
-		Name:     name,
-		Value:    value,
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   true,
-	}
-	http.SetCookie(w, c)
 }

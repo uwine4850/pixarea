@@ -10,7 +10,7 @@ import (
 func ProfileHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
 	manager.Render().SetTemplatePath("src/templates/profile.html")
 	if err := manager.Render().RenderTemplate(w, r); err != nil {
-		return func() { router.ServerError(w, err.Error(), manager.Config()) }
+		return func() { router.ServerError(w, err.Error(), manager) }
 	}
 	return func() {}
 }
@@ -18,7 +18,7 @@ func ProfileHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IMan
 func ProfileEditHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
 	manager.Render().SetTemplatePath("src/templates/profile_edit.html")
 	if err := manager.Render().RenderTemplate(w, r); err != nil {
-		return func() { router.ServerError(w, err.Error(), manager.Config()) }
+		return func() { router.ServerError(w, err.Error(), manager) }
 	}
 	return func() {}
 }

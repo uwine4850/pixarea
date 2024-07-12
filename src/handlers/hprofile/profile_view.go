@@ -20,44 +20,33 @@ type User struct {
 	Avatar      string `db:"avatar"`
 	BgImage     string `db:"bg_image"`
 	Description string `db:"description"`
-	Auth        auth.User
+	Auth        auth.AuthItem
 }
 
 type ProfileView struct {
 	object.ObjView
 }
 
-func (v *ProfileView) Context(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) object.ObjectContext {
+func (v *ProfileView) Context(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) (object.ObjectContext, error) {
 	context, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT_CONTEXT)
 	user, ok := context.(object.ObjectContext)["profile"].(User)
 	if ok {
-		db := database.NewDatabase(cnf.DB_ARGS)
-		if err := db.Connect(); err != nil {
-			v.OnError(w, r, manager, err)
-			return nil
-		}
-		defer func() {
-			if err := db.Close(); err != nil {
-				v.OnError(w, r, manager, err)
-			}
-		}()
-		authDb, err := db.SyncQ().Select([]string{"*"}, "auth", dbutils.WHEquals(map[string]interface{}{"id": user.AuthId}, ""), 1)
+		_auth := auth.NewAuth(v.GetDB(), w, manager)
+		authDb, err := _auth.UserByID(user.AuthId)
 		if err != nil {
-			v.OnError(w, r, manager, err)
-			return nil
+			return nil, err
 		}
-		var auth auth.User
-		if err := dbutils.FillStructFromDb(authDb[0], &auth); err != nil {
-			v.OnError(w, r, manager, err)
-			return nil
+		var auth auth.AuthItem
+		if err := dbutils.FillStructFromDb(authDb, &auth); err != nil {
+			return nil, err
 		}
 		user.Auth = auth
 	}
-	return object.ObjectContext{"profile": user}
+	return object.ObjectContext{"profile": user}, nil
 }
 
 func (v *ProfileView) OnError(w http.ResponseWriter, r *http.Request, manager interfaces.IManager, err error) {
-	router.ServerError(w, err.Error(), manager.Config())
+	router.ServerError(w, err.Error(), manager)
 }
 
 func ObjectProfileViewHNDL() func(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {

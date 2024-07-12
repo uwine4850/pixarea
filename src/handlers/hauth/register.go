@@ -24,7 +24,7 @@ func RegisterHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IMa
 	router.CatchRedirectError(r, manager)
 	manager.Render().SetTemplatePath("src/templates/auth/register.html")
 	if err := manager.Render().RenderTemplate(w, r); err != nil {
-		return func() { router.ServerError(w, err.Error(), manager.Config()) }
+		return func() { router.ServerError(w, err.Error(), manager) }
 	}
 	return func() {}
 }
@@ -72,7 +72,7 @@ func registerUser(w http.ResponseWriter, db *database.Database, manager interfac
 	if err := _auth.RegisterUser(registerForm.Username[0], registerForm.Password[0]); err != nil {
 		return err
 	}
-	registerUserDB, err := _auth.UserExist(registerForm.Username[0])
+	registerUserDB, err := _auth.UserByUsername(registerForm.Username[0])
 	if err != nil {
 		return err
 	}
