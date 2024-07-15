@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "../base.html" %}
 {% block title %}
 Profile
 {% endblock title %}
@@ -9,10 +9,10 @@ Profile
         <div class="profile-bg-avatar">
             <div class="profile-bg-avatar-blur"></div>
             {% if profile.BgImage %}
-            <img src="{{ profile.BgImage }}" alt="">
+            <img src="{{ profile.BgImage|imgSkipPrefix }}" alt="">
             {% endif %}
             <button class="profile-edit-button">
-                <a href="">
+                <a href="/profile-edit/{{ userId }}">
                     <img src="/static/img/icons/edit.svg" alt="">
                 </a>
             </button>
@@ -96,7 +96,7 @@ Profile
 {% block right_side %}
 <div class="separate-content-right separate-content-right-profile separate-content-right-profile-hide" id="separate-content-right-profile">
     <div class="separate-content-right-header">
-        {% include "header/prof_header.html" %}
+        {% include "../header/prof_header.html" %}
     </div>
     <div class="separate-content-right-content">
         <div class="collections-list">

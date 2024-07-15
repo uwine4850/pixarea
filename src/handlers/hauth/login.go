@@ -2,6 +2,7 @@ package hauth
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/uwine4850/foozy/pkg/builtin/auth"
 	"github.com/uwine4850/foozy/pkg/database"
@@ -49,7 +50,7 @@ func LoginPostHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IM
 	if err := loginUser(_auth, loginForm); err != nil {
 		return func() { router.RedirectError(w, r, "/login", err.Error(), manager) }
 	}
-	if err := userCookies(w, _auth, loginForm.Username[0]); err != nil {
+	if err := userCookies(w, loginForm.Username[0], db); err != nil {
 		return func() { router.RedirectError(w, r, "/login", err.Error(), manager) }
 	}
 	return func() { http.Redirect(w, r, "/explore", http.StatusFound) }
@@ -74,16 +75,21 @@ func loginUser(_auth *auth.Auth, loginForm *LoginForm) error {
 	return nil
 }
 
-func userCookies(w http.ResponseWriter, _auth *auth.Auth, username string) error {
-	authUser, err := _auth.UserByUsername(username)
+func userCookies(w http.ResponseWriter, username string, db *database.Database) error {
+	authUser, err := auth.UserByUsername(db, username)
 	if err != nil {
 		return err
 	}
-	user, err := _auth.UserByID(authUser["id"])
+	user, err := db.SyncQ().Select([]string{"id", "avatar"}, "user", dbutils.WHEquals(map[string]interface{}{"auth": authUser["id"]}, ""), 1)
+	if err != nil {
+		return err
+	}
+	id, err := dbutils.ParseInt(user[0]["id"])
 	if err != nil {
 		return err
 	}
 	cookies.SetStandartCookie(w, pnames.COOKIE_USER_USERNAME, username, "/", 0)
-	cookies.SetStandartCookie(w, pnames.COOKIE_USER_AVATAR, dbutils.ParseString(user["avatar"]), "/", 0)
+	cookies.SetStandartCookie(w, pnames.COOKIE_USER_AVATAR, dbutils.ParseString(user[0]["avatar"]), "/", 0)
+	cookies.SetStandartCookie(w, pnames.COOKIE_USER_ID, strconv.Itoa(id), "/", 0)
 	return nil
 }

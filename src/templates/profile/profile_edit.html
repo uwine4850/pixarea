@@ -1,10 +1,10 @@
-{% extends "base.html" %}
+{% extends "../base.html" %}
 {% block title %}
 Profile edit
 {% endblock title %}
 
 {% block header %}
-{% include "header/header.html" %}
+{% include "../header/header.html" %}
 {% endblock header %}
 
 {% block content %}
@@ -13,30 +13,30 @@ Profile edit
         Profile edit
     </h2>
     <hr>
-    <form class="form-block">
+    <form class="form-block" method="post" action="/profile-edit-post" enctype="multipart/form-data">
         <div class="form-block-item">
             <label for="avatar">Avatar</label>
             <input id="avatar" name="avatar" type="file">
-            <div class="form-block-item form-block-item-checkbox form-block-item-inner-checkbox">
-                <input id="delete_background" name="delete_background" type="checkbox">
-                <label for="delete_background">delete background</label>
-            </div>
-        </div>
-        <div class="form-block-item">
-            <label for="background">Background</label>
-            <input id="background" name="background" type="file">
             <div class="form-block-item form-block-item-checkbox form-block-item-inner-checkbox">
                 <input id="delete_avatar" name="delete_avatar" type="checkbox">
                 <label for="delete_avatar">delete avatar</label>
             </div>
         </div>
         <div class="form-block-item">
-            <label for="username">Username</label>
-            <input id="username" name="username" type="text">
+            <label for="background">Background</label>
+            <input id="background" name="background" type="file">
+            <div class="form-block-item form-block-item-checkbox form-block-item-inner-checkbox">
+                <input id="delete_background" name="delete_background" type="checkbox">
+                <label for="delete_background">delete background</label>
+            </div>
+        </div>
+        <div class="form-block-item">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" value="{{ profile.Name }}">
         </div>
         <div class="form-block-item">
             <label for="description">Description</label>
-            <textarea name="description" id="description"></textarea>
+            <textarea name="description" id="description">{{ profile.Description }}</textarea>
         </div>
         <button class="save-profile-edit"><a>Save</a></button>
     </form>

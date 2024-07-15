@@ -1,4 +1,5 @@
 package pnames
 
 const COOKIE_USER_USERNAME = "USER_USERNAME"
+const COOKIE_USER_ID = "USER_ID"
 const COOKIE_USER_AVATAR = "USER_AVATAR"

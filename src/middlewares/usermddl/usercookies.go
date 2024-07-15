@@ -30,5 +30,14 @@ func ParseUserCookies(w http.ResponseWriter, r *http.Request, manager interfaces
 		hauth.LogOutHNDL(w, r, manager)()
 		return
 	}
-	manager.Render().SetContext(map[string]interface{}{"userUsername": userUsername.Value, "userAvatar": userAvatar.Value})
+	userId, err := r.Cookie(pnames.COOKIE_USER_ID)
+	if err != nil {
+		hauth.LogOutHNDL(w, r, manager)()
+		return
+	}
+
+	manager.Render().SetContext(map[string]interface{}{"userUsername": userUsername.Value, "userAvatar": userAvatar.Value, "userId": userId.Value})
+	manager.OneTimeData().SetUserContext("userUsername", userUsername.Value)
+	manager.OneTimeData().SetUserContext("userAvatar", userAvatar.Value)
+	manager.OneTimeData().SetUserContext("userId", userId.Value)
 }

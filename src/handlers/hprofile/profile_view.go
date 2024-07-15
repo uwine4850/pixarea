@@ -31,8 +31,7 @@ func (v *ProfileView) Context(w http.ResponseWriter, r *http.Request, manager in
 	context, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT_CONTEXT)
 	user, ok := context.(object.ObjectContext)["profile"].(User)
 	if ok {
-		_auth := auth.NewAuth(v.GetDB(), w, manager)
-		authDb, err := _auth.UserByID(user.AuthId)
+		authDb, err := auth.UserByID(v.GetDB(), user.AuthId)
 		if err != nil {
 			return nil, err
 		}
@@ -52,7 +51,7 @@ func (v *ProfileView) OnError(w http.ResponseWriter, r *http.Request, manager in
 func ObjectProfileViewHNDL() func(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
 	db := database.NewDatabase(cnf.DB_ARGS)
 	view := object.TemplateView{
-		TemplatePath: "src/templates/profile.html",
+		TemplatePath: "src/templates/profile/profile.html",
 		View: &ProfileView{
 			object.ObjView{
 				Name:       "profile",

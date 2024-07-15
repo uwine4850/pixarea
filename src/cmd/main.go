@@ -51,9 +51,11 @@ func main() {
 	newRouter.SetMiddleware(mddl)
 
 	newRouter.GetMux().Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("src/static"))))
+	newRouter.GetMux().Handle("/media/", http.StripPrefix("/media/", http.FileServer(http.Dir("src/media"))))
 	newRouter.Get("/explore", handlers.ExploreHNDL)
 	newRouter.Get("/profile/<id>", hprofile.ObjectProfileViewHNDL())
-	newRouter.Get("/profile/edit", handlers.ProfileEditHNDL)
+	newRouter.Get("/profile-edit/<id>", hprofile.ObjectProfileEditViewHNDL())
+	newRouter.Post("/profile-edit-post", hprofile.ProfileEditPostHNDL)
 	newRouter.Get("/logout", hauth.LogOutHNDL)
 	newRouter.Get("/login", hauth.LoginHNDL)
 	newRouter.Post("/login-post", hauth.LoginPostHNDL)

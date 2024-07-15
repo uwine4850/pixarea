@@ -72,7 +72,7 @@ func registerUser(w http.ResponseWriter, db *database.Database, manager interfac
 	if err := _auth.RegisterUser(registerForm.Username[0], registerForm.Password[0]); err != nil {
 		return err
 	}
-	registerUserDB, err := _auth.UserByUsername(registerForm.Username[0])
+	registerUserDB, err := auth.UserByUsername(db, registerForm.Username[0])
 	if err != nil {
 		return err
 	}
