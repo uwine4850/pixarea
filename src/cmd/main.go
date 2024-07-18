@@ -17,6 +17,7 @@ import (
 	"github.com/uwine4850/pixarea/src/handlers"
 	"github.com/uwine4850/pixarea/src/handlers/hauth"
 	"github.com/uwine4850/pixarea/src/handlers/hprofile"
+	"github.com/uwine4850/pixarea/src/handlers/hpublication"
 	"github.com/uwine4850/pixarea/src/handlers/tmplfilters"
 	"github.com/uwine4850/pixarea/src/middlewares/authmddl"
 	"github.com/uwine4850/pixarea/src/middlewares/usermddl"
@@ -61,8 +62,8 @@ func main() {
 	newRouter.Post("/login-post", hauth.LoginPostHNDL)
 	newRouter.Get("/register", hauth.RegisterHNDL)
 	newRouter.Post("/register-post", hauth.RegisterPostHNDL)
-	newRouter.Get("/publication/test", handlers.PublicationViewHNDL)
-	newRouter.Get("/new-publication", handlers.NewPublicationHNDL)
+	newRouter.Get("/publication/test", hpublication.PublicationViewHNDL)
+	newRouter.Get("/new-publication", hpublication.NewPublicationHNDL)
 
 	gf := globalflow.NewGlobalFlow(10)
 	gf.AddNotWaitTask(bglobalflow.KeyUpdater(3600))

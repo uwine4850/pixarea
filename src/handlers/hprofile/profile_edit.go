@@ -51,7 +51,8 @@ func (v *ProfileEditView) Context(w http.ResponseWriter, r *http.Request, manage
 	context, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT_CONTEXT)
 	user, ok := context.(object.ObjectContext)["profile"].(User)
 	if ok {
-		authDb, err := auth.UserByID(v.GetDB(), user.AuthId)
+		db, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT_DB)
+		authDb, err := auth.UserByID(db.(*database.Database), user.AuthId)
 		if err != nil {
 			return nil, err
 		}
@@ -122,12 +123,11 @@ func ProfileEditPostHNDL(w http.ResponseWriter, r *http.Request, manager interfa
 
 	removedImages := []string{}
 	createImages := []string{}
-	profileDbData := []dbutils.DbEquals{}
+	profileDbData := map[string]any{}
 
 	handleImages(w, db, &authUID, fillForm, &profileForm, &profileDbData, &removedImages, &createImages, manager)
-
-	profileDbData = append(profileDbData, dbutils.DbEquals{Name: "name", Value: fillForm.GetOrDef("Name", 0).(string)})
-	profileDbData = append(profileDbData, dbutils.DbEquals{Name: "description", Value: fillForm.GetOrDef("Description", 0).(string)})
+	profileDbData["name"] = fillForm.GetOrDef("Name", 0).(string)
+	profileDbData["description"] = fillForm.GetOrDef("Description", 0).(string)
 	if _, err := db.SyncQ().Update("user", profileDbData, dbutils.WHEquals(dbutils.WHValue{"auth": authUID.UID}, "")); err != nil {
 		if err := rollbackCreateImages(createImages); err != nil {
 			return func() { router.ServerError(w, err.Error(), manager) }
@@ -143,7 +143,7 @@ func ProfileEditPostHNDL(w http.ResponseWriter, r *http.Request, manager interfa
 }
 
 func handleImages(w http.ResponseWriter, db *database.Database, authUID *auth.AuthCookie, fillForm *form.FillableFormStruct, profileForm *ProfileEditForm,
-	profileDbData *[]dbutils.DbEquals, removedImages *[]string, createImages *[]string, manager interfaces.IManager) error {
+	profileDbData *map[string]any, removedImages *[]string, createImages *[]string, manager interfaces.IManager) error {
 	var profileFromDb User
 	if fillForm.GetOrDef("DeleteAvatar", 0) != "" || fillForm.GetOrDef("DeleteBackground", 0) != "" {
 		user, err := db.SyncQ().Select([]string{"*"}, "user", dbutils.WHEquals(dbutils.WHValue{"auth": authUID.UID}, "AND"), 1)
@@ -156,7 +156,7 @@ func handleImages(w http.ResponseWriter, db *database.Database, authUID *auth.Au
 	}
 
 	if fillForm.GetOrDef("DeleteAvatar", 0).(string) != "" {
-		*profileDbData = append(*profileDbData, dbutils.DbEquals{Name: "avatar", Value: ""})
+		(*profileDbData)["avatar"] = ""
 		if profileFromDb.Avatar != "" {
 			*removedImages = append(*removedImages, profileFromDb.Avatar)
 		}
@@ -167,13 +167,13 @@ func handleImages(w http.ResponseWriter, db *database.Database, authUID *auth.Au
 			if err := form.SaveFile(w, profileForm.Avatar[0].Header, "src/media/avatars", &avatarPath, manager); err != nil {
 				return err
 			}
-			*profileDbData = append(*profileDbData, dbutils.DbEquals{Name: "avatar", Value: avatarPath})
+			(*profileDbData)["avatar"] = avatarPath
 			*createImages = append(*createImages, avatarPath)
 			cookies.SetStandartCookie(w, pnames.COOKIE_USER_AVATAR, avatarPath, "/", 0)
 		}
 	}
 	if fillForm.GetOrDef("DeleteBackground", 0).(string) != "" {
-		*profileDbData = append(*profileDbData, dbutils.DbEquals{Name: "bg_image", Value: ""})
+		(*profileDbData)["bg_image"] = ""
 		if profileFromDb.BgImage != "" {
 			*removedImages = append(*removedImages, profileFromDb.BgImage)
 		}
@@ -183,7 +183,7 @@ func handleImages(w http.ResponseWriter, db *database.Database, authUID *auth.Au
 			if err := form.SaveFile(w, profileForm.Background[0].Header, "src/media/backgrounds", &backgroundPath, manager); err != nil {
 				return err
 			}
-			*profileDbData = append(*profileDbData, dbutils.DbEquals{Name: "bg_image", Value: backgroundPath})
+			(*profileDbData)["bg_image"] = backgroundPath
 			*createImages = append(*createImages, backgroundPath)
 		}
 	}

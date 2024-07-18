@@ -27,6 +27,10 @@ github.com/uwine4850/foozy v0.3.2-0.20240712083648-f69b5afa5cab h1:CEkP1l9VuHhMk
 github.com/uwine4850/foozy v0.3.2-0.20240712083648-f69b5afa5cab/go.mod h1:ZOJmDY32a3iSi6B7lm520/f+Zw4p8RJYVi9dSuzhUOA=
 github.com/uwine4850/foozy v0.3.2-0.20240715095246-2902fb62c4fe h1:vc8XQbbIevYYr00xvX4EmIxJwKLaxGEizeG/uYbLufw=
 github.com/uwine4850/foozy v0.3.2-0.20240715095246-2902fb62c4fe/go.mod h1:ZOJmDY32a3iSi6B7lm520/f+Zw4p8RJYVi9dSuzhUOA=
+github.com/uwine4850/foozy v0.3.2-0.20240717135606-cb56d1675d7e h1:w2pWLl2PAnAE+PISNQklMhOjrNVqBiX9XWuI8fpfwdU=
+github.com/uwine4850/foozy v0.3.2-0.20240717135606-cb56d1675d7e/go.mod h1:ZOJmDY32a3iSi6B7lm520/f+Zw4p8RJYVi9dSuzhUOA=
+github.com/uwine4850/foozy v0.3.2-0.20240718112746-0b9c5d470d36 h1:PVYj7wZTiYXlxzJARDpnZEm6RlOn0Cd9L3yUjqtFQuY=
+github.com/uwine4850/foozy v0.3.2-0.20240718112746-0b9c5d470d36/go.mod h1:ZOJmDY32a3iSi6B7lm520/f+Zw4p8RJYVi9dSuzhUOA=
 golang.org/x/crypto v0.18.0 h1:PGVlW0xEltQnzFZ55hkuX5+KLyrMYhHld1YHO4AKcdc=
 golang.org/x/crypto v0.18.0/go.mod h1:R0j02AL6hcrfOiy9T4ZYp/rcWeMxM3L6QYxlOuEG1mg=
 golang.org/x/net v0.20.0 h1:aCL9BSgETF1k+blQaYUBx9hJ9LOGP3gAVemcZlf1Kpo=

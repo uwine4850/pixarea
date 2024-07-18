@@ -1,4 +1,4 @@
-package handlers
+package hpublication
 
 import (
 	"net/http"
