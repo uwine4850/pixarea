@@ -33,6 +33,8 @@ export class ShowInputImages{
             const img = document.createElement('img');
             
             const wrapper = document.createElement("div");
+            wrapper.setAttribute("data-name", file.name);            
+
             this.addImageWrapperClasses(wrapper);
             wrapper.appendChild(img);
 
@@ -51,7 +53,7 @@ export class ShowInputImages{
             return;
         }
         this.input.onchange = async (event) => {
-            if (this.input.files) {
+            if (this.input.files) {                
                 let compresedFiles = await CompressImage.compressFromInput(this.input, 0.2);
                 this.displayImages(Array.from(compresedFiles));
                 if (this.inputChange)
@@ -59,4 +61,16 @@ export class ShowInputImages{
             }
         }
     }
+}
+
+export function getSortedImageNames(containerId: string, imageClass: string): string[]{
+    let names = []
+    let images = document.getElementById(containerId)?.getElementsByClassName(imageClass) as HTMLCollectionOf<HTMLElement>
+    if (images){
+        for (let i = 0; i < images.length; i++) {
+            const image = images[i];
+            names.push(image.getAttribute("data-name"));
+        }
+    }
+    return names
 }

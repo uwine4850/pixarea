@@ -63,7 +63,8 @@ func main() {
 	newRouter.Get("/register", hauth.RegisterHNDL)
 	newRouter.Post("/register-post", hauth.RegisterPostHNDL)
 	newRouter.Get("/publication/test", hpublication.PublicationViewHNDL)
-	newRouter.Get("/new-publication", hpublication.NewPublicationHNDL)
+	newRouter.Get("/new-publication", hpublication.NewPublicationPageHNDL)
+	newRouter.Post("/new-publication-post", hpublication.NewPublicationHNDL())
 
 	gf := globalflow.NewGlobalFlow(10)
 	gf.AddNotWaitTask(bglobalflow.KeyUpdater(3600))

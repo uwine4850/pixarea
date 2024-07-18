@@ -9,11 +9,12 @@ New publication
 
 {% block content %}
 <div class="new-publication-form">
+    <span class="error" id="error">{{ REDIRECT_ERROR }}</span>
     <h2 class="new-publication-title">
         New publication
     </h2>
     <hr>
-    <form class="form-block">
+    <form id="new-publication-form" class="form-block" method="post" action="/new-publication-post" enctype="multipart/form-data">
         <div class="form-block-item">
             <label for="name">Name</label>
             <input id="name" name="name" type="text">
@@ -31,11 +32,11 @@ New publication
                 </button>
                 <div class="dropdown-for-btn new-publication-dropdown-for-btn dropdown-for-btn-hide">
                     <div class="dropdown-for-btn-checkbox-item">
-                        <input type="checkbox" id="pub_ctgr_PIXELART">
+                        <input type="checkbox" id="pub_ctgr_PIXELART" name="pub_ctgr_PIXELART">
                         <label for="pub_ctgr_PIXELART">Pixelart</label>
                     </div>
                     <div class="dropdown-for-btn-checkbox-item">
-                        <input type="checkbox" id="pub_ctgr_GAMEDEV">
+                        <input type="checkbox" id="pub_ctgr_GAMEDEV" name="pub_ctgr_GAMEDEV">
                         <label for="pub_ctgr_GAMEDEV">Gamedev</label>
                     </div>
                 </div>
