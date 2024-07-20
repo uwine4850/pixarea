@@ -26,6 +26,16 @@
             resize: none;
             height: 100px;
         }
+        select{
+            padding: 10px;
+            background-color: $color_accent_1;
+            border: none;
+            height: fit-content;
+            outline: none;
+            option{
+                font-size: 1.2rem;
+            }
+        }
     }
     .form-block-item-checkbox{
         display: flex;
