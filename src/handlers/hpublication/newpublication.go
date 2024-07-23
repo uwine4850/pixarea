@@ -2,21 +2,27 @@ package hpublication
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
 	"github.com/uwine4850/foozy/pkg/database"
 	"github.com/uwine4850/foozy/pkg/database/dbutils"
 	"github.com/uwine4850/foozy/pkg/interfaces"
-	"github.com/uwine4850/foozy/pkg/namelib"
 	"github.com/uwine4850/foozy/pkg/router"
 	"github.com/uwine4850/foozy/pkg/router/form"
 	"github.com/uwine4850/foozy/pkg/router/object"
+	"github.com/uwine4850/foozy/pkg/utils/fstring"
 	"github.com/uwine4850/pixarea/src/cnf"
 	"github.com/uwine4850/pixarea/src/cnf/pnames"
 	"github.com/uwine4850/pixarea/src/handlers/hprofile"
 )
+
+const MAX_IMAGE_BYTES_SIZE = 10_485_760 // 10MB
+const MAX_SELECT_CATEGORIES = 2
+const PATH_TO_PUBLICATION_DIRECTORY = "src/media/publications"
 
 type PublicationDB struct {
 	Author      string `db:"author"`
@@ -35,15 +41,7 @@ type NewPublicationForm struct {
 	Name        []string        `form:"name"`
 	Description []string        `form:"description"`
 	Categories  []string        `form:"catedories"`
-	Images      []form.FormFile `form:"images"`
-}
-
-func PublicationViewHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
-	manager.Render().SetTemplatePath("src/templates/publication/publication_view.html")
-	if err := manager.Render().RenderTemplate(w, r); err != nil {
-		return func() { router.ServerError(w, err.Error(), manager) }
-	}
-	return func() {}
+	Images      []form.FormFile `form:"images" ext:".png .jpg .jpeg"`
 }
 
 func NewPublicationPageHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
@@ -96,22 +94,36 @@ func (v *NewPublicationView) Context(w http.ResponseWriter, r *http.Request, man
 			v.OnError(w, r, manager, err)
 		}
 	}()
-	context, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT_CONTEXT)
-	pubForm := context.(object.ObjectContext)[namelib.OBJECT_CONTEXT_FORM].(NewPublicationForm)
+	// Getting the NewPublicationForm form.
+	formInterface, err := v.FormInterface(manager.OneTimeData())
+	if err != nil {
+		return nil, err
+	}
+	pubForm := formInterface.(NewPublicationForm)
 	filledForm := form.NewFillableFormStruct(&pubForm)
 
+	// Validation of form data.
+	if err := imageSizeValidation(pubForm.Images); err != nil {
+		return nil, err
+	}
+	if err := selectCategoriesValidation(pubForm.Categories); err != nil {
+		return nil, err
+	}
+
+	// Obtaining IDs of selected categories from the database.
+	// Get the current authentication ID.
+	categories, err := getCategories(db, pubForm.Categories)
+	if err != nil {
+		return nil, err
+	}
 	currentAuth, err := hprofile.GetCurrentAuth(r, manager)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(pubForm.Categories) > 2 {
-		return nil, errors.New("you can select up to 2 categories")
-	}
-	categories, err := getCategories(db, pubForm.Categories)
-	if err != nil {
-		return nil, err
-	}
+	//Start of transaction.
+	// Creating a publication in a table. Then creating images in a directory and saving them in a database.
+	// If something goes wrong, roll back the changes.
 	db.BeginTransaction()
 	publication := PublicationDB{
 		Author:      currentAuth.UID,
@@ -133,9 +145,11 @@ func (v *NewPublicationView) Context(w http.ResponseWriter, r *http.Request, man
 		return nil, err
 	}
 	if err := saveImages(db, newPublicationID, &createdImages); err != nil {
+		rollBackCreateImages(createdImages)
 		return nil, err
 	}
 	if err := db.CommitTransaction(); err != nil {
+		rollBackCreateImages(createdImages)
 		return nil, err
 	}
 
@@ -143,24 +157,33 @@ func (v *NewPublicationView) Context(w http.ResponseWriter, r *http.Request, man
 	return object.ObjectContext{}, nil
 }
 
+func imageSizeValidation(images []form.FormFile) error {
+	for i := 0; i < len(images); i++ {
+		if images[i].Header.Size > MAX_IMAGE_BYTES_SIZE {
+			return errors.New("image size is more than 10MB")
+		}
+	}
+	return nil
+}
+
+func selectCategoriesValidation(categories []string) error {
+	if len(categories) > MAX_SELECT_CATEGORIES {
+		return fmt.Errorf("you can select up to %s categories", strconv.Itoa(MAX_SELECT_CATEGORIES))
+	}
+	return nil
+}
+
 func createPublicationInTable(db *database.Database, publicationDb PublicationDB) (any, error) {
 	publicationParams, err := dbutils.ParamsValueFromStruct(&publicationDb)
 	if err != nil {
 		return nil, err
 	}
-	if _, err := db.SyncQ().Insert(pnames.PUBLICATIONS_TABLE, publicationParams); err != nil {
-		return nil, err
-	}
-	newPublicationID, err := db.SyncQ().Select([]string{"id"}, pnames.PUBLICATIONS_TABLE, dbutils.WHEquals(
-		dbutils.WHValue{
-			"author": publicationDb.Author,
-			"date":   publicationDb.Date,
-		}, "AND"), 0,
-	)
+	info, err := db.SyncQ().Insert(pnames.PUBLICATIONS_TABLE, publicationParams)
 	if err != nil {
 		return nil, err
 	}
-	return newPublicationID[0]["id"], nil
+
+	return info["id"], nil
 }
 
 func getCategories(db *database.Database, categoriesName []string) ([]any, error) {
@@ -187,12 +210,20 @@ func createImages(w http.ResponseWriter, images []form.FormFile, manager interfa
 	imagesPath := []string{}
 	for i := 0; i < len(images); i++ {
 		var path string
-		if err := form.SaveFile(w, images[i].Header, "src/media/publications", &path, manager); err != nil {
+		if err := form.SaveFile(w, images[i].Header, PATH_TO_PUBLICATION_DIRECTORY, &path, manager); err != nil {
 			return nil, err
 		}
 		imagesPath = append(imagesPath, path)
 	}
 	return imagesPath, nil
+}
+
+func rollBackCreateImages(paths []string) {
+	for i := 0; i < len(paths); i++ {
+		if fstring.PathExist(paths[i]) {
+			os.Remove(paths[i])
+		}
+	}
 }
 
 func saveImages(db *database.Database, publicationID any, imagesPath *[]string) error {
@@ -218,7 +249,7 @@ func NewPublicationHNDL() func(w http.ResponseWriter, r *http.Request, manager i
 		View: &NewPublicationView{
 			object.FormView{
 				FormStruct:       NewPublicationForm{},
-				NotNilFormFields: []string{"Name", "Description", "Images"},
+				NotNilFormFields: []string{"*"},
 				NilIfNotExist:    []string{},
 			},
 		},
