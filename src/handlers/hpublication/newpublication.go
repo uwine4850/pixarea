@@ -25,11 +25,12 @@ const MAX_SELECT_CATEGORIES = 2
 const PATH_TO_PUBLICATION_DIRECTORY = "src/media/publications"
 
 type PublicationDB struct {
+	Id          string `db:"id"`
 	Author      string `db:"author"`
 	Name        string `db:"name"`
 	Description string `db:"description"`
-	Category1   any    `db:"category1"`
-	Category2   any    `db:"category2"`
+	Category1   string `db:"category1"`
+	Category2   string `db:"category2"`
 	Date        string `db:"date"`
 }
 
@@ -174,7 +175,7 @@ func selectCategoriesValidation(categories []string) error {
 }
 
 func createPublicationInTable(db *database.Database, publicationDb PublicationDB) (any, error) {
-	publicationParams, err := dbutils.ParamsValueFromStruct(&publicationDb)
+	publicationParams, err := dbutils.ParamsValueFromStruct(&publicationDb, []string{"id", "category1", "category2"})
 	if err != nil {
 		return nil, err
 	}
@@ -186,8 +187,8 @@ func createPublicationInTable(db *database.Database, publicationDb PublicationDB
 	return info["id"], nil
 }
 
-func getCategories(db *database.Database, categoriesName []string) ([]any, error) {
-	categories := make([]any, 2)
+func getCategories(db *database.Database, categoriesName []string) ([]string, error) {
+	categories := make([]string, 2)
 	for i := 0; i < len(categoriesName); i++ {
 		categoryID, err := db.SyncQ().Select([]string{"id"}, pnames.CATEGORIES_TABLE,
 			dbutils.WHEquals(dbutils.WHValue{"name": categoriesName[i]}, ""), 1)

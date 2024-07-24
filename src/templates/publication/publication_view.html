@@ -5,53 +5,59 @@ New publication
 
 {% block left_side %}
 <div class="pub-left-content">
+    <span class="error"></span>
     <div class="pub-author-block">
         <button class="profile-icon">
             <a>
-                <img src="/static/img/temp/1.jpg" alt="">
+                <img src="{{ author.Avatar|imgOrDef }}" alt="">
             </a>
         </button>
         <div class="pub-author-right">
             <div class="pub-author-username">
-                renxob
+                {{ author.Auth.Username }}
             </div>
             <div class="pub-author-buttons">
                 <button class="pub-author-subscribe">
                     <a>Subscribe</a>
                 </button>
-                <button class="pub-author-like">
-                    <a><img src="/static/img/icons/like.svg" alt=""></a>
-                </button>
+                <form id="publication-like" class="publication-like-form">
+                    <input type="hidden" name="publication-id" value="{{ publication.Id }}">
+                    {% if isLike %}
+                    <button id="pub-author-like" class="pub-author-like publcation-liked">
+                        <a><img src="/static/img/icons/like.svg" alt=""></a>
+                    </button>
+                    {% else %}
+                    <button id="pub-author-like" class="pub-author-like">
+                        <a><img src="/static/img/icons/like.svg" alt=""></a>
+                    </button>
+                    {% endif %}
+                </form>
             </div>
         </div>
     </div>
     <hr>
     <div class="pub-description-block">
         <h2 class="pub-name">
-            Project one
+            {{ publication.Name }}
         </h2>
         <div class="pub-description">
-            There are many variations of 
-            passages of Lorem Ipsum available, 
-            but the majority have suffered alteration 
-            in some form, by injected humour, or randomised words.
+            {{ publication.Description }}
         </div>
     </div>
     <hr>
     <div class="pub-info">
         <div class="pub-info-categories">
-            <div class="pub-info-category">
-                Pixelart
-            </div>
-            <div class="pub-info-category">
-                3D ART
-            </div>
+            {% for category in categories %}
+                <div class="pub-info-category">
+                    {{ category.Name }}
+                </div>
+            {% endfor %}
         </div>
         <div class="pub-info-with-icons">
             <div class="pub-info-with-icons-item">
                 <img src="/static/img/icons/date.svg" alt="">
                 <div class="pub-info-with-icons-text">
-                    12.03.3004
+                    {{ publication.Date }}
                 </div>
             </div>
             <div class="pub-info-with-icons-item">
@@ -62,8 +68,8 @@ New publication
             </div>
             <div class="pub-info-with-icons-item">
                 <img src="/static/img/icons/like.svg" alt="">
-                <div class="pub-info-with-icons-text">
-                    244877
+                <div class="pub-info-with-icons-text" id="publication-like-count">
+                    {{ likes }}
                 </div>
             </div>
         </div>

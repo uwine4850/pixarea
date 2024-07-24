@@ -5,6 +5,7 @@ import { showErrorOnPage } from "./errors/displayError";
 import { getSortedImageNames } from "./image/showInputImage";
 import { redirect } from "./routing/urlUtils";
 import { AsyncForm } from "./form/asyncForm";
+import { sendLikeForm } from "./publication_like";
 
 
 export function publicationRunDropdown(): Dropdown {
@@ -91,3 +92,5 @@ function sendForm(formId: string){
   }
 }
 sendForm("new-publication-form");
+
+sendLikeForm("publication-like");
