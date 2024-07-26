@@ -36,3 +36,15 @@ CREATE TABLE IF NOT EXISTS `pixarea`.`publication_likes` (
     FOREIGN KEY (publication) REFERENCES pixarea.publication(id) ON DELETE CASCADE,
     FOREIGN KEY (auth_id) REFERENCES pixarea.auth(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS `pixarea`.`publication_comments` (
+    `id` INT NOT NULL AUTO_INCREMENT ,
+    `publication_id` INT NOT NULL,
+    `author_id` INT NOT NULL ,
+    `target_user_id` INT NOT NULL,
+    `text` TEXT NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (publication) REFERENCES pixarea.publication(id) ON DELETE CASCADE,
+    FOREIGN KEY (author_id) REFERENCES pixarea.auth(id) ON DELETE CASCADE,
+    FOREIGN KEY (target_user_id) REFERENCES pixarea.auth(id) ON DELETE CASCADE
+);

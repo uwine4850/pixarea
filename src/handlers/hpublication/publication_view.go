@@ -46,11 +46,15 @@ func (v *PublicationView) Context(w http.ResponseWriter, r *http.Request, manage
 	if err != nil {
 		return nil, err
 	}
+	images, err := getPublicationImages(db, publicationContext.Id)
+	if err != nil {
+		return nil, err
+	}
 	isLike, err := LikeExist(db, publicationContext.Id, currentAuth.UID)
 	if err != nil {
 		return nil, err
 	}
-	return object.ObjectContext{"categories": categories, "author": author, "likes": likes, "isLike": isLike}, nil
+	return object.ObjectContext{"categories": categories, "author": author, "likes": likes, "isLike": isLike, "images": images}, nil
 }
 
 // getParentUser In the database, the publication is bound to the auth table.
@@ -85,8 +89,12 @@ func getParentUser(db *database.Database, authId any) (hprofile.User, error) {
 
 // getPublicationCategories retrieving publication categories by their identifiers.
 func getPublicationCategories(db *database.Database, categoriesId []string) ([]PublicationCategory, error) {
-	categories := make([]PublicationCategory, len(categoriesId))
+	categories := []PublicationCategory{}
 	for i := 0; i < len(categoriesId); i++ {
+		// If the category is NULL.
+		if categoriesId[i] == "" {
+			continue
+		}
 		category, err := db.SyncQ().QB().Select("*", pnames.CATEGORIES_TABLE).Where("id", "=", categoriesId[i], "LIMIT 1").Ex()
 		if err != nil {
 			return nil, err
@@ -98,7 +106,7 @@ func getPublicationCategories(db *database.Database, categoriesId []string) ([]P
 		if err := dbutils.FillStructFromDb(category[0], &categoryStruct); err != nil {
 			return nil, err
 		}
-		categories[i] = categoryStruct
+		categories = append(categories, categoryStruct)
 	}
 	return categories, nil
 }
@@ -117,6 +125,21 @@ func getLikeCount(db *database.Database, publicationId string) (int, error) {
 		return 0, err
 	}
 	return likes, nil
+}
+
+func getPublicationImages(db *database.Database, publicationId string) ([]string, error) {
+	imagesPaths := []string{}
+	images, err := db.SyncQ().QB().Select("*", pnames.PUBLCATION_IMAGES_TABLE).Where("publication", "=", publicationId).Ex()
+	if err != nil {
+		return nil, err
+	}
+	if err := dbutils.DatabaseResultNotEmpty(images); err != nil {
+		return nil, err
+	}
+	for i := 0; i < len(images); i++ {
+		imagesPaths = append(imagesPaths, dbutils.ParseString(images[i]["image_path"]))
+	}
+	return imagesPaths, nil
 }
 
 func PublicationViewHNDL() func(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {

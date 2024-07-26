@@ -98,6 +98,7 @@ New publication
         <div class="publication-comments-block">
             <h3>Comments</h3>
             <form action="" class="publication-comment-form">
+                {{ CSRF_TOKEN|safe }}
                 <textarea name="publication-comment"></textarea>
                 <button class="send-publication-comment">
                     Send
@@ -213,12 +214,11 @@ New publication
 <div class="separate-content-right separate-content-right-publication">
     {% include "../header/header.html" %}
     <div class="publication-images">
+        {% for image in images %}
         <div class="publication-images-item">
-            <img src="/static/img/temp/1.jpg" alt="">
+            <img src="{{ image|imgSkipPrefix }}" alt="">
         </div>
-        <div class="publication-images-item">
-            <img src="/static/img/temp/2.jpg" alt="">
-        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock right_side %}
