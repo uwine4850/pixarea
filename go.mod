@@ -2,7 +2,7 @@ module github.com/uwine4850/pixarea
 
 go 1.22.3
 
-require github.com/uwine4850/foozy v0.3.2-0.20240723152945-c0a4fe3d5706
+require github.com/uwine4850/foozy v0.3.2-0.20240726130555-e574aa24f19a
 
 require (
 	github.com/flosch/pongo2 v0.0.0-20200913210552-0d938eb266f3 // indirect

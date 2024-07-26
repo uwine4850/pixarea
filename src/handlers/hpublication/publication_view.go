@@ -112,7 +112,7 @@ func getLikeCount(db *database.Database, publicationId string) (int, error) {
 	if len(count) != 1 {
 		return 0, errors.New("error getting number of likes")
 	}
-	likes, err := dbutils.ParseInt(count[0]["COUNT(*)"])
+	likes, err := dbutils.ParseInt(count[0]["count"])
 	if err != nil {
 		return 0, err
 	}
