@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/uwine4850/foozy/pkg/builtin/auth"
 	"github.com/uwine4850/foozy/pkg/database"
 	"github.com/uwine4850/foozy/pkg/database/dbutils"
 	"github.com/uwine4850/foozy/pkg/interfaces"
@@ -16,6 +15,15 @@ import (
 	"github.com/uwine4850/pixarea/src/cnf/pnames"
 	"github.com/uwine4850/pixarea/src/handlers/hprofile"
 )
+
+type Comment struct {
+	Id            string `db:"id"`
+	PublicationId string `db:"publication_id"`
+	AuthorId      string `db:"author_id"`
+	TargetAuthId  string `db:"target_user_id"`
+	Text          string `db:"text"`
+	Author        hprofile.User
+}
 
 type PublicationView struct {
 	object.ObjView
@@ -30,7 +38,7 @@ func (v *PublicationView) Context(w http.ResponseWriter, r *http.Request, manage
 	db := dbInterface.(*database.Database)
 	publicationContextInterface, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT_CONTEXT)
 	publicationContext := publicationContextInterface.(object.ObjectContext)["publication"].(PublicationDB)
-	author, err := getParentUser(db, publicationContext.Author)
+	author, err := hprofile.GetUserByAuthId(db, publicationContext.Author)
 	if err != nil {
 		return nil, err
 	}
@@ -54,37 +62,18 @@ func (v *PublicationView) Context(w http.ResponseWriter, r *http.Request, manage
 	if err != nil {
 		return nil, err
 	}
-	return object.ObjectContext{"categories": categories, "author": author, "likes": likes, "isLike": isLike, "images": images}, nil
-}
-
-// getParentUser In the database, the publication is bound to the auth table.
-// This function gets information about the user based on his auth ID.
-func getParentUser(db *database.Database, authId any) (hprofile.User, error) {
-	authUser, err := auth.UserByID(db, authId)
+	comments, err := getComments(db, publicationContext.Id)
 	if err != nil {
-		return hprofile.User{}, err
+		return nil, err
 	}
-	if authUser == nil {
-		return hprofile.User{}, fmt.Errorf("auth by id %s not found", authId)
-	}
-	var auth auth.AuthItem
-	if err := dbutils.FillStructFromDb(authUser, &auth); err != nil {
-		return hprofile.User{}, err
-	}
-
-	user, err := db.SyncQ().QB().Select("*", "user").Where("auth", "=", authId, "LIMIT 1").Ex()
-	if err != nil {
-		return hprofile.User{}, err
-	}
-	if len(user) != 1 {
-		return hprofile.User{}, fmt.Errorf("user by auth id %s not found", authId)
-	}
-	var userStruct hprofile.User
-	if err := dbutils.FillStructFromDb(user[0], &userStruct); err != nil {
-		return hprofile.User{}, err
-	}
-	userStruct.Auth = auth
-	return userStruct, nil
+	return object.ObjectContext{
+		"categories": categories,
+		"author":     author,
+		"likes":      likes,
+		"isLike":     isLike,
+		"images":     images,
+		"comments":   comments,
+	}, nil
 }
 
 // getPublicationCategories retrieving publication categories by their identifiers.
@@ -140,6 +129,31 @@ func getPublicationImages(db *database.Database, publicationId string) ([]string
 		imagesPaths = append(imagesPaths, dbutils.ParseString(images[i]["image_path"]))
 	}
 	return imagesPaths, nil
+}
+
+func getComments(db *database.Database, publicationId string) ([]Comment, error) {
+	commentsList := []Comment{}
+	comments, err := db.SyncQ().QB().Select("*", pnames.PUBLICATION_COMMENTS_TABLE).
+		Where("publication_id", "=", publicationId, "ORDER BY id DESC").Ex()
+	if err != nil {
+		return nil, err
+	}
+	if err := dbutils.DatabaseResultNotEmpty(comments); err != nil {
+		return nil, err
+	}
+	for i := 0; i < len(comments); i++ {
+		var comm Comment
+		if err := dbutils.FillStructFromDb(comments[i], &comm); err != nil {
+			return nil, err
+		}
+		user, err := hprofile.GetUserByAuthId(db, comm.AuthorId)
+		if err != nil {
+			return nil, err
+		}
+		comm.Author = user
+		commentsList = append(commentsList, comm)
+	}
+	return commentsList, nil
 }
 
 func PublicationViewHNDL() func(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {

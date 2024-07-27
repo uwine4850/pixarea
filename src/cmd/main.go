@@ -68,6 +68,7 @@ func main() {
 	newRouter.Get("/new-publication", hpublication.NewPublicationPageHNDL)
 	newRouter.Post("/new-publication-post", hpublication.NewPublicationHNDL())
 	newRouter.Post("/publication-like", hpublication.PublicationLikeHNDL)
+	newRouter.Post("/publication-comment", hpublication.PublicationCommentHNDL)
 
 	gf := globalflow.NewGlobalFlow(10)
 	gf.AddNotWaitTask(bglobalflow.KeyUpdater(3600))

@@ -1,11 +1,12 @@
 import { DragImage } from "./image/dragImages";
-import { Dropdown} from "./dropdown";
+import { Dropdown, closeDropdown} from "./dropdown";
 import { ShowInputImages } from "./image/showInputImage";
 import { showErrorOnPage } from "./errors/displayError";
 import { getSortedImageNames } from "./image/showInputImage";
 import { redirect } from "./routing/urlUtils";
 import { AsyncForm } from "./form/asyncForm";
 import { sendLikeForm } from "./publication_like";
+import { sendCommentForm } from "./publication_comment";
 
 
 export function publicationRunDropdown(): Dropdown {
@@ -27,32 +28,36 @@ inputImages.onInputChange(function(){
 });
 inputImages.run();
 
-// HIDE COMMENT
-let commentHideBtns = document.getElementsByClassName("comment-hide-btn") as HTMLCollectionOf<HTMLButtonElement>;
-for (let i = 0; i < commentHideBtns.length; i++) {
-  const btn = commentHideBtns[i];
-  btn.onclick = function() {
-    let comment = btn.closest(".publication-comment-item");
-    let PCH = null;
-    if(comment){
-      PCH = comment.getElementsByClassName("publication-comment-item-hidden-panel")[0] as HTMLButtonElement;
+export function hideShowComments(){
+  // HIDE COMMENT
+  let commentHideBtns = document.getElementsByClassName("comment-hide-btn") as HTMLCollectionOf<HTMLButtonElement>;
+  for (let i = 0; i < commentHideBtns.length; i++) {
+    const btn = commentHideBtns[i];
+    btn.onclick = function() {
+      let comment = btn.closest(".publication-comment-item");
+      let PCH = null;
+      if(comment){
+        PCH = comment.getElementsByClassName("publication-comment-item-hidden-panel")[0] as HTMLButtonElement;
+      }
+      if(comment && PCH){
+        comment.classList.add("publication-comment-item-hidden");
+        PCH.classList.add("PCH-enable");
+      }
     }
-    if(comment && PCH){
-      comment.classList.add("publication-comment-item-hidden");
-      PCH.classList.add("PCH-enable");
+  }
+
+  // SHOW HIDDEN COMMENT
+  let PCH = document.getElementsByClassName("publication-comment-item-hidden-panel") as HTMLCollectionOf<HTMLButtonElement>;
+  for (let i = 0; i < PCH.length; i++) {
+    PCH[i].onclick = function() {
+      let comment = PCH[i].parentElement;
+      comment.classList.remove("publication-comment-item-hidden");
+      PCH[i].classList.remove("PCH-enable");
     }
   }
 }
 
-// SHOW HIDDEN COMMENT
-let PCH = document.getElementsByClassName("publication-comment-item-hidden-panel") as HTMLCollectionOf<HTMLButtonElement>;
-for (let i = 0; i < PCH.length; i++) {
-  PCH[i].onclick = function() {
-    let comment = PCH[i].parentElement;
-    comment.classList.remove("publication-comment-item-hidden");
-    PCH[i].classList.remove("PCH-enable");
-  }
-}
+hideShowComments();
 
 function sendForm(formId: string){
   let form = document.getElementById(formId) as HTMLFormElement;
@@ -94,3 +99,12 @@ function sendForm(formId: string){
 sendForm("new-publication-form");
 
 sendLikeForm("publication-like");
+
+sendCommentForm("publication-comment-form", function () {
+  let drpd = publicationRunDropdown();
+  hideShowComments();
+  document.addEventListener('click', (event) => {
+    const clickTarget = event.target as Node;
+    closeDropdown(drpd, clickTarget);
+  });
+});

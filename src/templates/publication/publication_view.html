@@ -97,79 +97,19 @@ New publication
         <!-- COMMENTS -->
         <div class="publication-comments-block">
             <h3>Comments</h3>
-            <form action="" class="publication-comment-form">
+            <form class="publication-comment-form" id="publication-comment-form">
                 {{ CSRF_TOKEN|safe }}
-                <textarea name="publication-comment"></textarea>
+                <input type="hidden" name="publication_id" value="{{ publication.Id }}">
+                <textarea name="comment_text"></textarea>
                 <button class="send-publication-comment">
                     Send
                 </button>
             </form>
-            <div class="publication-comment-list">
-                <!-- HIDE CLASS publication-comment-item-hidden -->
-                <div class="publication-comment-item">
-                    <!-- ENABLE CLASS PCH-enable -->
-                    <button class="publication-comment-item-hidden-panel">
-                        <a>
-                            Hidden comment. Click to show comment.
-                        </a>
-                    </button>
-                    <div class="comment-user-info">
-                        <button class="profile-icon profile-icon-comment">
-                            <a>
-                                <img src="/static/img/temp/1.jpg" alt="">
-                            </a>
-                        </button>
-                        <div class="comment-user-username">
-                            renxob
-                        </div>
-                        {% include "./pub_comm_menu.html" %}
-                    </div>
-                    <div class="comment-content">
-                        There are many variations of passages 
-                        of Lorem Ipsum available, but the majority 
-                        have suffered alteration in some form, by 
-                        injected humour, or randomised words which
-                    </div>
-                    <div class="comment-footer">
-                        <button class="reply-button">
-                            Reply
-                        </button>
-                        <button class="comment-open-close-reply">
-                            <a>
-                                Answers
-                                <img src="/static/img/icons/expand_right.svg" alt="">
-                            </a>
-                        </button>
-                    </div>
-                </div>
-                <div class="publication-comment-item">
-                    <button class="publication-comment-item-hidden-panel">
-                        <a>
-                            Hidden comment. Click to show comment.
-                        </a>
-                    </button>
-                    <div class="comment-user-info">
-                        <button class="profile-icon profile-icon-comment">
-                            <a>
-                                <img src="/static/img/temp/1.jpg" alt="">
-                            </a>
-                        </button>
-                        <div class="comment-user-username">
-                            renxob
-                        </div>
-                        {% include "./pub_comm_menu.html" %}
-                    </div>
-                    <div class="comment-content">
-                        There are many variations of passages 
-                        of Lorem Ipsum available, but the majority 
-                        have suffered alteration in some form, by 
-                        injected humour, or randomised words which
-                    </div>
-                    <button class="reply-button">
-                        Reply
-                    </button>
-
-                    <div class="publication-comment-item publication-comment-item-reply">
+            <div class="publication-comment-list" id="publication-comment-list">
+                {% for comment in comments %}
+                    <!-- HIDE CLASS publication-comment-item-hidden -->
+                    <div class="publication-comment-item">
+                        <!-- ENABLE CLASS PCH-enable -->
                         <button class="publication-comment-item-hidden-panel">
                             <a>
                                 Hidden comment. Click to show comment.
@@ -178,32 +118,31 @@ New publication
                         <div class="comment-user-info">
                             <button class="profile-icon profile-icon-comment">
                                 <a>
-                                    <img src="/static/img/temp/1.jpg" alt="">
+                                    <img src="{{ comment.Author.Avatar|imgOrDef }}" alt="">
                                 </a>
                             </button>
                             <div class="comment-user-username">
-                                renxob
+                                {{ comment.Author.Name }}
                             </div>
                             {% include "./pub_comm_menu.html" %}
                         </div>
                         <div class="comment-content">
-                            There are many variations of passages 
-                            of Lorem Ipsum available, but the majority 
-                            have suffered alteration in some form, by 
-                            injected humour, or randomised words which
+                            {{ comment.Text }}
                         </div>
-                        <hr>
+                        <form class="comment-footer">
+                            <input type="hidden" name="comm_id" value="{{ comment.Id }}">
+                            <button class="reply-button">
+                                Reply
+                            </button>
+                            <button class="comment-open-close-reply">
+                                <a>
+                                    Answers
+                                    <img src="/static/img/icons/expand_right.svg" alt="">
+                                </a>
+                            </button>
+                        </form>
                     </div>
-                    
-                    <div class="comment-footer">
-                        <button class="comment-open-close-reply">
-                            <a>
-                                Answers 345
-                                <img src="/static/img/icons/expand_right.svg" alt="">
-                            </a>
-                        </button>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>

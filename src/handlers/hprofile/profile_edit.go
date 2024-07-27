@@ -125,7 +125,9 @@ func ProfileEditPostHNDL(w http.ResponseWriter, r *http.Request, manager interfa
 	createImages := []string{}
 	profileDbData := map[string]any{}
 
-	handleImages(w, db, &authUID, fillForm, &profileForm, &profileDbData, &removedImages, &createImages, manager)
+	if err := handleImages(w, db, &authUID, fillForm, &profileForm, &profileDbData, &removedImages, &createImages, manager); err != nil {
+		return func() { router.ServerError(w, err.Error(), manager) }
+	}
 	profileDbData["name"] = fillForm.GetOrDef("Name", 0).(string)
 	profileDbData["description"] = fillForm.GetOrDef("Description", 0).(string)
 	if _, err := db.SyncQ().Update("user", profileDbData, dbutils.WHEquals(dbutils.WHValue{"auth": authUID.UID}, "")); err != nil {
