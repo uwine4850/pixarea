@@ -2,8 +2,9 @@ import "../scss/style.scss";
 import { Dropdown, closeDropdown } from "./dropdown";
 import "./base";
 import "./profile";
-import { publicationRunDropdown, newPublicationRunDropdown } from "./publication";
-import { RemoveUrlParameters } from "./routerutils/utils";
+import { publicationRunDropdown, newPublicationRunDropdown } from "./publication/publication";
+import { RemoveUrlParameters } from "./utils/url/urlUtils";
+
 
 let drpd = new Dropdown("header-btn-dropdown");
 drpd.run();
