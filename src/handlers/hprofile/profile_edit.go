@@ -23,15 +23,15 @@ type ProfileEditView struct {
 }
 
 func (v *ProfileEditView) Permissions(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) (bool, func()) {
-	hashKey := manager.Config().Get32BytesKey().HashKey()
-	blockKey := manager.Config().Get32BytesKey().BlockKey()
+	hashKey := manager.Config().Key().Get32BytesKey().HashKey()
+	blockKey := manager.Config().Key().Get32BytesKey().BlockKey()
 	var cookieAuth auth.AuthCookie
-	if err := cookies.ReadSecureCookieData([]byte(hashKey), []byte(blockKey), r, namelib.COOKIE_AUTH, &cookieAuth); err != nil {
+	if err := cookies.ReadSecureCookieData([]byte(hashKey), []byte(blockKey), r, namelib.AUTH.COOKIE_AUTH, &cookieAuth); err != nil {
 		return false, func() {
 			router.ServerForbidden(w, manager)
 		}
 	}
-	context, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT_CONTEXT)
+	context, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT.OBJECT_CONTEXT)
 	user, ok := context.(object.ObjectContext)["profile"].(User)
 	if ok {
 		if user.AuthId != cookieAuth.UID {
@@ -48,10 +48,10 @@ func (v *ProfileEditView) Permissions(w http.ResponseWriter, r *http.Request, ma
 }
 
 func (v *ProfileEditView) Context(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) (object.ObjectContext, error) {
-	context, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT_CONTEXT)
+	context, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT.OBJECT_CONTEXT)
 	user, ok := context.(object.ObjectContext)["profile"].(User)
 	if ok {
-		db, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT_DB)
+		db, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT.OBJECT_DB)
 		authDb, err := auth.UserByID(db.(*database.Database), user.AuthId)
 		if err != nil {
 			return nil, err
@@ -193,10 +193,10 @@ func handleImages(w http.ResponseWriter, db *database.Database, authUID *auth.Au
 }
 
 func getUIDFromCookie(r *http.Request, manager interfaces.IManager) (auth.AuthCookie, error) {
-	hashKey := manager.Config().Get32BytesKey().HashKey()
-	blockKey := manager.Config().Get32BytesKey().BlockKey()
+	hashKey := manager.Config().Key().Get32BytesKey().HashKey()
+	blockKey := manager.Config().Key().Get32BytesKey().BlockKey()
 	var cookieAuth auth.AuthCookie
-	if err := cookies.ReadSecureCookieData([]byte(hashKey), []byte(blockKey), r, namelib.COOKIE_AUTH, &cookieAuth); err != nil {
+	if err := cookies.ReadSecureCookieData([]byte(hashKey), []byte(blockKey), r, namelib.AUTH.COOKIE_AUTH, &cookieAuth); err != nil {
 		return auth.AuthCookie{}, err
 	}
 	return cookieAuth, nil

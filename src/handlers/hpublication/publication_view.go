@@ -34,9 +34,9 @@ func (v *PublicationView) OnError(w http.ResponseWriter, r *http.Request, manage
 }
 
 func (v *PublicationView) Context(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) (object.ObjectContext, error) {
-	dbInterface, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT_DB)
+	dbInterface, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT.OBJECT_DB)
 	db := dbInterface.(*database.Database)
-	publicationContextInterface, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT_CONTEXT)
+	publicationContextInterface, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT.OBJECT_CONTEXT)
 	publicationContext := publicationContextInterface.(object.ObjectContext)["publication"].(PublicationDB)
 	author, err := hprofile.GetUserByAuthId(db, publicationContext.Author)
 	if err != nil {

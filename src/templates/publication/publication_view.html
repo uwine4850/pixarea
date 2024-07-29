@@ -5,7 +5,7 @@ New publication
 
 {% block left_side %}
 <div class="pub-left-content">
-    <span class="error"></span>
+    <span class="error" id="error"></span>
     <div class="pub-author-block">
         <button class="profile-icon">
             <a>
@@ -100,7 +100,7 @@ New publication
             <form class="publication-comment-form" id="publication-comment-form">
                 {{ CSRF_TOKEN|safe }}
                 <input type="hidden" name="publication_id" value="{{ publication.Id }}">
-                <textarea name="comment_text"></textarea>
+                <textarea id="publication_comment_text" name="comment_text"></textarea>
                 <button class="send-publication-comment">
                     Send
                 </button>

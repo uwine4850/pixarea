@@ -28,10 +28,10 @@ type ProfileView struct {
 }
 
 func (v *ProfileView) Context(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) (object.ObjectContext, error) {
-	context, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT_CONTEXT)
+	context, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT.OBJECT_CONTEXT)
 	user, ok := context.(object.ObjectContext)["profile"].(User)
 	if ok {
-		db, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT_DB)
+		db, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT.OBJECT_DB)
 		authDb, err := auth.UserByID(db.(*database.Database), user.AuthId)
 		if err != nil {
 			return nil, err

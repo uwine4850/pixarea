@@ -13,10 +13,10 @@ import (
 )
 
 func GetCurrentAuth(r *http.Request, manager interfaces.IManager) (auth.AuthCookie, error) {
-	hashKey := manager.Config().Get32BytesKey().HashKey()
-	blockKey := manager.Config().Get32BytesKey().BlockKey()
+	hashKey := manager.Config().Key().Get32BytesKey().HashKey()
+	blockKey := manager.Config().Key().Get32BytesKey().BlockKey()
 	var cookieAuth auth.AuthCookie
-	if err := cookies.ReadSecureCookieData([]byte(hashKey), []byte(blockKey), r, namelib.COOKIE_AUTH, &cookieAuth); err != nil {
+	if err := cookies.ReadSecureCookieData([]byte(hashKey), []byte(blockKey), r, namelib.AUTH.COOKIE_AUTH, &cookieAuth); err != nil {
 		return auth.AuthCookie{}, err
 	}
 	return cookieAuth, nil

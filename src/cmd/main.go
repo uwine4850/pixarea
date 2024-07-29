@@ -44,11 +44,11 @@ func main() {
 	tmplfilters.RegisterFilters()
 
 	newManager := manager.NewManager(render)
-	newManager.Config().ErrorLoggingFile("src/logs/errors.log")
-	newManager.Config().ErrorLogging(true)
-	newManager.Config().Debug(true)
+	newManager.Config().DebugConfig().ErrorLoggingFile("src/logs/errors.log")
+	newManager.Config().DebugConfig().ErrorLogging(true)
+	newManager.Config().DebugConfig().Debug(true)
 	newManager.Config().PrintLog(true)
-	newManager.Config().Generate32BytesKeys()
+	newManager.Config().Key().Generate32BytesKeys()
 
 	newRouter := router.NewRouter(newManager)
 	newRouter.SetMiddleware(mddl)

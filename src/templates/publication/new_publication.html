@@ -15,6 +15,7 @@ New publication
     </h2>
     <hr>
     <form id="new-publication-form" class="form-block" method="post" action="/new-publication-post" enctype="multipart/form-data">
+        {{ CSRF_TOKEN|safe }}
         <div class="form-block-item">
             <label for="name">Name</label>
             <input id="name" name="name" type="text">

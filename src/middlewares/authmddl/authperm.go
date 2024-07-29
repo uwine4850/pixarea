@@ -11,7 +11,7 @@ import (
 )
 
 func AuthPermissions(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) {
-	urlPattern, ok := manager.OneTimeData().GetUserContext(namelib.URL_PATTERN)
+	urlPattern, ok := manager.OneTimeData().GetUserContext(namelib.ROUTER.URL_PATTERN)
 	if !ok {
 		router.ServerError(w, "url pattern not exist", manager)
 		return
@@ -21,7 +21,7 @@ func AuthPermissions(w http.ResponseWriter, r *http.Request, manager interfaces.
 	}
 	for i := 0; i < len(r.Cookies()); i++ {
 		cookie := r.Cookies()[i]
-		if cookie.Name == namelib.COOKIE_AUTH {
+		if cookie.Name == namelib.AUTH.COOKIE_AUTH {
 			return
 		}
 	}

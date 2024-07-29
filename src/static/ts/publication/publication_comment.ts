@@ -66,6 +66,10 @@ export function sendCommentForm(formId: string, onSuccess: () => void){
                 newElement.classList.add("publication-comment-item");
                 newElement.innerHTML = commentText(response["name"], response["avatar"], response["text"], response["comm_id"]);
                 publication_comment_list.prepend(newElement);
+                let publication_comment_text = document.getElementById("publication_comment_text") as HTMLTextAreaElement;
+                if (publication_comment_text){
+                    publication_comment_text.value = "";
+                }
                 onSuccess();
             }
           }

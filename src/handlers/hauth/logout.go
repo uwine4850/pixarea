@@ -10,8 +10,8 @@ import (
 )
 
 func LogOutHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
-	cookies.SetStandartCookie(w, namelib.COOKIE_AUTH, "", "/", -1)
-	cookies.SetStandartCookie(w, namelib.COOKIE_AUTH_DATE, "", "/", -1)
+	cookies.SetStandartCookie(w, namelib.AUTH.COOKIE_AUTH, "", "/", -1)
+	cookies.SetStandartCookie(w, namelib.AUTH.COOKIE_AUTH_DATE, "", "/", -1)
 	cookies.SetStandartCookie(w, pnames.COOKIE_USER_USERNAME, "", "/", -1)
 	cookies.SetStandartCookie(w, pnames.COOKIE_USER_AVATAR, "", "/", -1)
 	return func() {

@@ -36,6 +36,9 @@ func PublicationCommentHNDL(w http.ResponseWriter, r *http.Request, manager inte
 	}()
 
 	frm := form.NewForm(r)
+	if err := frm.ValidateCsrfToken(); err != nil {
+		return func() { router.SendJson(map[string]string{"success": "false", "error": err.Error()}, w) }
+	}
 	comm, err := getComment(frm)
 	if err != nil {
 		return func() { router.SendJson(map[string]string{"success": "false", "error": err.Error()}, w) }

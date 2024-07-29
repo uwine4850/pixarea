@@ -12,7 +12,7 @@ import (
 )
 
 func ParseUserCookies(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) {
-	urlPattern, ok := manager.OneTimeData().GetUserContext(namelib.URL_PATTERN)
+	urlPattern, ok := manager.OneTimeData().GetUserContext(namelib.ROUTER.URL_PATTERN)
 	if !ok {
 		router.ServerError(w, "url pattern not exist", manager)
 		return
