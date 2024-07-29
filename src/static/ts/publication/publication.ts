@@ -4,6 +4,7 @@ import { ShowInputImages } from "../image/showInputImage";
 import { sendLikeForm } from "./publication_like";
 import { sendCommentForm } from "./publication_comment";
 import { sendNewPublicationForm } from "./publication_send_form";
+import { sendHideCommentForm } from "./publication_hide";
 
 
 export function publicationRunDropdown(): Dropdown {
@@ -37,8 +38,15 @@ export function hideShowComments(){
         PCH = comment.getElementsByClassName("publication-comment-item-hidden-panel")[0] as HTMLButtonElement;
       }
       if(comment && PCH){
-        comment.classList.add("publication-comment-item-hidden");
-        PCH.classList.add("PCH-enable");
+        let comm_id_input = comment.querySelector('[name="comm_id"]') as HTMLInputElement;
+        let comm_publication_id = document.getElementById("comm_publication_id") as HTMLInputElement;
+        if(comm_id_input && comm_publication_id){
+          let comm_id_value = comm_id_input.value;
+          sendHideCommentForm(comm_id_value, comm_publication_id.value, function(){
+            comment.classList.add("publication-comment-item-hidden");
+            PCH.classList.add("PCH-enable");
+          });
+        }
       }
     }
   }
@@ -48,8 +56,16 @@ export function hideShowComments(){
   for (let i = 0; i < PCH.length; i++) {
     PCH[i].onclick = function() {
       let comment = PCH[i].parentElement;
-      comment.classList.remove("publication-comment-item-hidden");
-      PCH[i].classList.remove("PCH-enable");
+      let comm_id_input = comment.querySelector('[name="comm_id"]') as HTMLInputElement;
+      let comm_publication_id = document.getElementById("comm_publication_id") as HTMLInputElement;
+      if(comm_id_input && comm_publication_id){
+        let comm_id_value = comm_id_input.value;
+        sendHideCommentForm(comm_id_value, comm_publication_id.value, function(){
+          comment.classList.add("publication-comment-item-hidden");
+          comment.classList.remove("publication-comment-item-hidden");
+          PCH[i].classList.remove("PCH-enable");
+        });
+      }
     }
   }
 }

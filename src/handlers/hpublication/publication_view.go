@@ -22,6 +22,7 @@ type Comment struct {
 	AuthorId      string `db:"author_id"`
 	TargetAuthId  string `db:"target_user_id"`
 	Text          string `db:"text"`
+	IsHide        string `db:"is_hide"`
 	Author        hprofile.User
 }
 
@@ -139,7 +140,7 @@ func getComments(db *database.Database, publicationId string) ([]Comment, error)
 		return nil, err
 	}
 	if err := dbutils.DatabaseResultNotEmpty(comments); err != nil {
-		return nil, err
+		return []Comment{}, nil
 	}
 	for i := 0; i < len(comments); i++ {
 		var comm Comment

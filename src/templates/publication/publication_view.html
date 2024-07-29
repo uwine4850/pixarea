@@ -107,10 +107,17 @@ New publication
             </form>
             <div class="publication-comment-list" id="publication-comment-list">
                 {% for comment in comments %}
-                    <!-- HIDE CLASS publication-comment-item-hidden -->
-                    <div class="publication-comment-item">
-                        <!-- ENABLE CLASS PCH-enable -->
-                        <button class="publication-comment-item-hidden-panel">
+                    {% if comment.IsHide == "1" %}
+                        <!-- HIDE CLASS publication-comment-item-hidden -->
+                        <div class="publication-comment-item publication-comment-item-hidden">
+                            <!-- ENABLE CLASS PCH-enable -->
+                            <button class="publication-comment-item-hidden-panel PCH-enable">
+                    {% else %}
+                        <!-- HIDE CLASS publication-comment-item-hidden -->
+                        <div class="publication-comment-item">
+                            <!-- ENABLE CLASS PCH-enable -->
+                            <button class="publication-comment-item-hidden-panel">
+                    {% endif %}
                             <a>
                                 Hidden comment. Click to show comment.
                             </a>
@@ -131,6 +138,7 @@ New publication
                         </div>
                         <form class="comment-footer">
                             <input type="hidden" name="comm_id" value="{{ comment.Id }}">
+                            <input type="hidden" id="comm_publication_id" value="{{ publication.Id }}">
                             <button class="reply-button">
                                 Reply
                             </button>
