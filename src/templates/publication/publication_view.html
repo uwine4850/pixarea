@@ -100,6 +100,8 @@ New publication
             <form class="publication-comment-form" id="publication-comment-form">
                 {{ CSRF_TOKEN|safe }}
                 <input type="hidden" name="publication_id" value="{{ publication.Id }}">
+                <input type="hidden" name="reply_id" id="reply_id_input" value="">
+                <span id="reply-to-user" class="reply-to-user reply-to-user-closed"></span>
                 <textarea id="publication_comment_text" name="comment_text"></textarea>
                 <button class="send-publication-comment">
                     Send
@@ -137,9 +139,9 @@ New publication
                             {{ comment.Text }}
                         </div>
                         <form class="comment-footer">
-                            <input type="hidden" name="comm_id" value="{{ comment.Id }}">
-                            <input type="hidden" id="comm_publication_id" value="{{ publication.Id }}">
-                            <button class="reply-button">
+                            <!-- <input type="hidden" name="comm_id" value="{{ comment.Id }}">
+                            <input type="hidden" id="comm_publication_id" value="{{ publication.Id }}"> -->
+                            <button data-reply-name="{{ comment.Author.Name }}" data-reply-id="{{ comment.Id }}" type="button" class="reply-button">
                                 Reply
                             </button>
                             <button class="comment-open-close-reply">

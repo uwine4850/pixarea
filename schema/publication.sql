@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS `pixarea`.`caledories_list` (
     PRIMARY KEY (`id`)
 );
 
--- INSERT INTO pixarea.caledories_list (`id`, `name`) VALUES (NULL, 'Pixelart'), (NULL, 'Gamedev'), (NULL, "Paint");
+INSERT INTO pixarea.caledories_list (`id`, `name`) VALUES (NULL, 'Pixelart'), (NULL, 'Gamedev'), (NULL, "Paint");
 
 CREATE TABLE IF NOT EXISTS `pixarea`.`publication` (
     `id` INT NOT NULL AUTO_INCREMENT ,
@@ -39,13 +39,13 @@ CREATE TABLE IF NOT EXISTS `pixarea`.`publication_likes` (
 
 CREATE TABLE IF NOT EXISTS `pixarea`.`publication_comments` (
     `id` INT NOT NULL AUTO_INCREMENT ,
+    `reply_id` INT NULL,
     `publication_id` INT NOT NULL,
     `author_id` INT NOT NULL ,
-    `target_user_id` INT NULL,
     `text` TEXT NOT NULL,
     `is_hide` BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (`id`),
     FOREIGN KEY (publication_id) REFERENCES pixarea.publication(id) ON DELETE CASCADE,
     FOREIGN KEY (author_id) REFERENCES pixarea.auth(id) ON DELETE CASCADE,
-    FOREIGN KEY (target_user_id) REFERENCES pixarea.auth(id) ON DELETE CASCADE
+    FOREIGN KEY (reply_id) REFERENCES pixarea.publication_comments(id) ON DELETE CASCADE
 );

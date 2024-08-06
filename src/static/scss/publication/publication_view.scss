@@ -132,6 +132,22 @@
                 margin-top: 5px;
                 display: flex;
                 flex-direction: column;
+                .reply-to-user{
+                    background-color: $color_button;
+                    margin: 10px 0;
+                    width: fit-content;
+                    padding: 5px;
+                    font-size: 1.1rem;
+                    transition: .1s;
+                    &:hover{
+                        cursor: pointer;
+                        filter: brightness(130%);
+                        // background-color: ;
+                    }
+                }
+                .reply-to-user-closed{
+                    display: none;
+                }
                 textarea{
                     width: 100%;
                     box-sizing: border-box;

@@ -18,12 +18,13 @@ import (
 
 type Comment struct {
 	Id            string `db:"id"`
+	ReplyId       string `db:"reply_id"`
 	PublicationId string `db:"publication_id"`
 	AuthorId      string `db:"author_id"`
-	TargetAuthId  string `db:"target_user_id"`
-	Text          string `db:"text"`
-	IsHide        string `db:"is_hide"`
-	Author        hprofile.User
+	// TargetAuthId  string `db:"target_user_id"`
+	Text   string `db:"text"`
+	IsHide string `db:"is_hide"`
+	Author hprofile.User
 }
 
 type PublicationView struct {
@@ -135,7 +136,7 @@ func getPublicationImages(db *database.Database, publicationId string) ([]string
 func getComments(db *database.Database, publicationId string) ([]Comment, error) {
 	commentsList := []Comment{}
 	comments, err := db.SyncQ().QB().Select("*", pnames.PUBLICATION_COMMENTS_TABLE).
-		Where("publication_id", "=", publicationId, "ORDER BY id DESC").Ex()
+		Where("publication_id", "=", publicationId, "AND", "reply_id IS NULL", "ORDER BY id DESC").Ex()
 	if err != nil {
 		return nil, err
 	}

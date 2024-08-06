@@ -81,3 +81,28 @@ export function sendCommentForm(formId: string, onSuccess: () => void){
       });
     }
 }
+
+function replyComment(){
+    let reply_buttons = document.getElementsByClassName("reply-button") as HTMLCollectionOf<HTMLButtonElement>;
+    for (let index = 0; index < reply_buttons.length; index++) {
+        const reply_button = reply_buttons[index];
+        reply_button.onclick = function(){
+            let reply_id = reply_button.getAttribute("data-reply-id");
+            let replyName = reply_button.getAttribute("data-reply-name");
+            let reply_id_input = document.getElementById("reply_id_input") as HTMLInputElement;
+            reply_id_input.value = reply_id;
+            let reply_to_user = document.getElementById("reply-to-user");
+            reply_to_user.classList.remove("reply-to-user-closed");
+            reply_to_user.innerHTML = replyName;
+        }
+    }
+}
+
+document.getElementById("reply-to-user")!.onclick = function(){
+    document.getElementById("reply-to-user").innerHTML = "";
+    document.getElementById("reply-to-user").classList.add("reply-to-user-closed");
+    let reply_id_input = document.getElementById("reply_id_input") as HTMLInputElement;
+    reply_id_input.value = null;
+}
+
+replyComment();
