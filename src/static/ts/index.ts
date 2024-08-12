@@ -5,7 +5,6 @@ import "./profile";
 import { publicationRunDropdown, newPublicationRunDropdown } from "./publication/publication";
 import { RemoveUrlParameters } from "./utils/url/urlUtils";
 
-
 let drpd = new Dropdown("header-btn-dropdown");
 drpd.run();
 

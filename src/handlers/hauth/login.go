@@ -8,9 +8,11 @@ import (
 	"github.com/uwine4850/foozy/pkg/database"
 	"github.com/uwine4850/foozy/pkg/database/dbutils"
 	"github.com/uwine4850/foozy/pkg/interfaces"
+	"github.com/uwine4850/foozy/pkg/interfaces/itypeopr"
 	"github.com/uwine4850/foozy/pkg/router"
 	"github.com/uwine4850/foozy/pkg/router/cookies"
-	"github.com/uwine4850/foozy/pkg/router/form"
+	"github.com/uwine4850/foozy/pkg/router/form/formmapper"
+	"github.com/uwine4850/foozy/pkg/typeopr"
 	"github.com/uwine4850/pixarea/src/cnf"
 	"github.com/uwine4850/pixarea/src/cnf/pnames"
 	"github.com/uwine4850/pixarea/src/utils/formutils"
@@ -31,11 +33,11 @@ func LoginHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IManag
 }
 
 func LoginPostHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
-	fillLoginForm, err := parseForm(r)
+	fillFormPtr, err := parseForm(r)
 	if err != nil {
 		return func() { router.RedirectError(w, r, "/login", err.Error(), manager) }
 	}
-	loginForm := fillLoginForm.GetStruct().(*LoginForm)
+	loginForm := fillFormPtr.Ptr().(*LoginForm)
 
 	db := database.NewDatabase(cnf.DB_ARGS)
 	if err := db.Connect(); err != nil {
@@ -56,16 +58,17 @@ func LoginPostHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IM
 	return func() { http.Redirect(w, r, "/explore", http.StatusFound) }
 }
 
-func parseForm(r *http.Request) (*form.FillableFormStruct, error) {
-	fillLoginForm := form.NewFillableFormStruct(&LoginForm{})
-	requiredFields, err := form.FieldsName(fillLoginForm, []string{})
+func parseForm(r *http.Request) (itypeopr.IPtr, error) {
+	loginForm := &LoginForm{}
+	loginFormPtr := typeopr.Ptr{}.New(loginForm)
+	requiredFields, err := formmapper.FieldsName(loginFormPtr, []string{})
 	if err != nil {
 		return nil, err
 	}
-	if err := formutils.ParseForm(r, fillLoginForm, []string{}, requiredFields); err != nil {
+	if err := formutils.ParseForm(r, loginFormPtr, []string{}, requiredFields); err != nil {
 		return nil, err
 	}
-	return fillLoginForm, nil
+	return loginFormPtr, nil
 }
 
 func loginUser(_auth *auth.Auth, loginForm *LoginForm) error {

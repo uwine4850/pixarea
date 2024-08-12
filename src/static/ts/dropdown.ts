@@ -21,6 +21,7 @@ export class Dropdown{
         let targetButtonsItems = Array.from(document.getElementsByClassName(this.targetButtonClassName) as HTMLCollectionOf<HTMLElement>);
         for (let i = 0; i < targetButtonsItems.length; i++) {
             const targetButton: HTMLElement = targetButtonsItems[i];
+
             let dropdownWrapper = targetButton.parentElement;
             if(!dropdownWrapper.classList.contains(this.dropdownWrapperClassName)){
                 throw new ExpectedClassNotFoundError("Dropdown.parse", this.dropdownWrapperClassName);

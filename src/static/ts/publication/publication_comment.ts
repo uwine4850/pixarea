@@ -98,11 +98,13 @@ function replyComment(){
     }
 }
 
-document.getElementById("reply-to-user")!.onclick = function(){
-    document.getElementById("reply-to-user").innerHTML = "";
-    document.getElementById("reply-to-user").classList.add("reply-to-user-closed");
-    let reply_id_input = document.getElementById("reply_id_input") as HTMLInputElement;
-    reply_id_input.value = null;
+if (document.getElementById("reply-to-user")){
+    document.getElementById("reply-to-user").onclick = function(){
+        document.getElementById("reply-to-user").innerHTML = "";
+        document.getElementById("reply-to-user").classList.add("reply-to-user-closed");
+        let reply_id_input = document.getElementById("reply_id_input") as HTMLInputElement;
+        reply_id_input.value = null;
+    }
 }
 
 replyComment();

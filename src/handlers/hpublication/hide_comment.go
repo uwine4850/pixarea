@@ -13,25 +13,26 @@ import (
 	"github.com/uwine4850/pixarea/src/cnf"
 	"github.com/uwine4850/pixarea/src/cnf/pnames"
 	"github.com/uwine4850/pixarea/src/handlers/hprofile"
+	"github.com/uwine4850/pixarea/src/utils"
 )
 
 func PublicationCommentHideHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
 	frm := form.NewForm(r)
 	if err := frm.Parse(); err != nil {
-		return func() { router.SendJson(map[string]string{"success": "false", "error": err.Error()}, w) }
+		return utils.SuccessJsonError(w, err)
 	}
 	comm_publication_id := frm.Value("comm_publication_id")
 	if comm_publication_id == "" {
-		return func() { router.SendJson(map[string]string{"success": "false", "error": "publication not found"}, w) }
+		return utils.SuccessJsonError(w, errors.New("publication not found"))
 	}
 	comm_id := frm.Value("comm_id")
 	if comm_id == "" {
-		return func() { router.SendJson(map[string]string{"success": "false", "error": "comment not found"}, w) }
+		return utils.SuccessJsonError(w, errors.New("comment not found"))
 	}
 
 	db := database.NewDatabase(cnf.DB_ARGS)
 	if err := db.Connect(); err != nil {
-		return func() { router.SendJson(map[string]string{"success": "false", "error": err.Error()}, w) }
+		return utils.SuccessJsonError(w, err)
 	}
 	defer func() {
 		if err := db.Close(); err != nil {
@@ -39,11 +40,11 @@ func PublicationCommentHideHNDL(w http.ResponseWriter, r *http.Request, manager 
 		}
 	}()
 	if err := validatePublicationAuthor(r, manager, db, comm_publication_id, comm_id); err != nil {
-		return func() { router.SendJson(map[string]string{"success": "false", "error": err.Error()}, w) }
+		return utils.SuccessJsonError(w, err)
 	}
 	_, err := db.SyncQ().Query(fmt.Sprintf("UPDATE %s SET is_hide = NOT is_hide WHERE id = %s;", pnames.PUBLICATION_COMMENTS_TABLE, comm_id))
 	if err != nil {
-		return func() { router.SendJson(map[string]string{"success": "false", "error": err.Error()}, w) }
+		return utils.SuccessJsonError(w, err)
 	}
 	return func() { router.SendJson(map[string]string{"success": "true"}, w) }
 }

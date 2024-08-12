@@ -6,10 +6,11 @@ import (
 
 	"github.com/uwine4850/foozy/pkg/builtin/auth"
 	"github.com/uwine4850/foozy/pkg/database"
-	"github.com/uwine4850/foozy/pkg/database/dbutils"
+	"github.com/uwine4850/foozy/pkg/database/dbmapper"
 	"github.com/uwine4850/foozy/pkg/interfaces"
 	"github.com/uwine4850/foozy/pkg/namelib"
 	"github.com/uwine4850/foozy/pkg/router/cookies"
+	"github.com/uwine4850/foozy/pkg/typeopr"
 )
 
 func GetCurrentAuth(r *http.Request, manager interfaces.IManager) (auth.AuthCookie, error) {
@@ -33,7 +34,7 @@ func GetUserByAuthId(db *database.Database, authId any) (User, error) {
 		return User{}, fmt.Errorf("auth by id %s not found", authId)
 	}
 	var auth auth.AuthItem
-	if err := dbutils.FillStructFromDb(authUser, &auth); err != nil {
+	if err := dbmapper.FillStructFromDb(authUser, typeopr.Ptr{}.New(&auth)); err != nil {
 		return User{}, err
 	}
 
@@ -45,7 +46,7 @@ func GetUserByAuthId(db *database.Database, authId any) (User, error) {
 		return User{}, fmt.Errorf("user by auth id %s not found", authId)
 	}
 	var userStruct User
-	if err := dbutils.FillStructFromDb(user[0], &userStruct); err != nil {
+	if err := dbmapper.FillStructFromDb(user[0], typeopr.Ptr{}.New(&userStruct)); err != nil {
 		return User{}, err
 	}
 	userStruct.Auth = auth

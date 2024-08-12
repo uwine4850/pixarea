@@ -3,10 +3,12 @@ package formutils
 import (
 	"net/http"
 
+	"github.com/uwine4850/foozy/pkg/interfaces/itypeopr"
 	"github.com/uwine4850/foozy/pkg/router/form"
+	"github.com/uwine4850/foozy/pkg/router/form/formmapper"
 )
 
-func ParseForm(r *http.Request, fill *form.FillableFormStruct, nilIfNotExist []string, requiredFields []string) error {
+func ParseForm(r *http.Request, fill itypeopr.IPtr, nilIfNotExist []string, requiredFields []string) error {
 	frm := form.NewForm(r)
 	if err := frm.Parse(); err != nil {
 		return err
@@ -14,10 +16,10 @@ func ParseForm(r *http.Request, fill *form.FillableFormStruct, nilIfNotExist []s
 	if err := frm.ValidateCsrfToken(); err != nil {
 		return err
 	}
-	if err := form.FillStructFromForm(frm, fill, nilIfNotExist); err != nil {
+	if err := formmapper.FillStructFromForm(frm, fill, nilIfNotExist); err != nil {
 		return err
 	}
-	if err := form.FieldsNotEmpty(fill, requiredFields); err != nil {
+	if err := formmapper.FieldsNotEmpty(fill, requiredFields); err != nil {
 		return err
 	}
 	return nil

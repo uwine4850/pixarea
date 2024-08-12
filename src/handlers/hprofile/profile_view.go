@@ -5,11 +5,12 @@ import (
 
 	"github.com/uwine4850/foozy/pkg/builtin/auth"
 	"github.com/uwine4850/foozy/pkg/database"
-	"github.com/uwine4850/foozy/pkg/database/dbutils"
+	"github.com/uwine4850/foozy/pkg/database/dbmapper"
 	"github.com/uwine4850/foozy/pkg/interfaces"
 	"github.com/uwine4850/foozy/pkg/namelib"
 	"github.com/uwine4850/foozy/pkg/router"
 	"github.com/uwine4850/foozy/pkg/router/object"
+	"github.com/uwine4850/foozy/pkg/typeopr"
 	"github.com/uwine4850/pixarea/src/cnf"
 )
 
@@ -37,7 +38,7 @@ func (v *ProfileView) Context(w http.ResponseWriter, r *http.Request, manager in
 			return nil, err
 		}
 		var auth auth.AuthItem
-		if err := dbutils.FillStructFromDb(authDb, &auth); err != nil {
+		if err := dbmapper.FillStructFromDb(authDb, typeopr.Ptr{}.New(&auth)); err != nil {
 			return nil, err
 		}
 		user.Auth = auth

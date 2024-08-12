@@ -1,16 +1,16 @@
 package hpublication
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/uwine4850/foozy/pkg/database"
+	"github.com/uwine4850/foozy/pkg/database/dbmapper"
 	"github.com/uwine4850/foozy/pkg/database/dbutils"
 	"github.com/uwine4850/foozy/pkg/interfaces"
 	"github.com/uwine4850/foozy/pkg/namelib"
 	"github.com/uwine4850/foozy/pkg/router"
 	"github.com/uwine4850/foozy/pkg/router/object"
+	"github.com/uwine4850/foozy/pkg/typeopr"
 	"github.com/uwine4850/pixarea/src/cnf"
 	"github.com/uwine4850/pixarea/src/cnf/pnames"
 	"github.com/uwine4850/pixarea/src/handlers/hprofile"
@@ -21,10 +21,9 @@ type Comment struct {
 	ReplyId       string `db:"reply_id"`
 	PublicationId string `db:"publication_id"`
 	AuthorId      string `db:"author_id"`
-	// TargetAuthId  string `db:"target_user_id"`
-	Text   string `db:"text"`
-	IsHide string `db:"is_hide"`
-	Author hprofile.User
+	Text          string `db:"text"`
+	IsHide        string `db:"is_hide"`
+	Author        hprofile.User
 }
 
 type PublicationView struct {
@@ -38,8 +37,12 @@ func (v *PublicationView) OnError(w http.ResponseWriter, r *http.Request, manage
 func (v *PublicationView) Context(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) (object.ObjectContext, error) {
 	dbInterface, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT.OBJECT_DB)
 	db := dbInterface.(*database.Database)
-	publicationContextInterface, _ := manager.OneTimeData().GetUserContext(namelib.OBJECT.OBJECT_CONTEXT)
-	publicationContext := publicationContextInterface.(object.ObjectContext)["publication"].(PublicationDB)
+	publicationContextInterface, err := object.GetObjectContext(manager)
+	if err != nil {
+		return nil, err
+	}
+	publicationContext := publicationContextInterface["publication"].(PublicationDB)
+
 	author, err := hprofile.GetUserByAuthId(db, publicationContext.Author)
 	if err != nil {
 		return nil, err
@@ -90,11 +93,11 @@ func getPublicationCategories(db *database.Database, categoriesId []string) ([]P
 		if err != nil {
 			return nil, err
 		}
-		if len(category) != 1 {
-			return nil, fmt.Errorf("category by id %s not found", categoriesId[i])
+		if err := dbutils.DatabaseResultNotEmpty(category); err != nil {
+			return nil, err
 		}
 		var categoryStruct PublicationCategory
-		if err := dbutils.FillStructFromDb(category[0], &categoryStruct); err != nil {
+		if err := dbmapper.FillStructFromDb(category[0], typeopr.Ptr{}.New(&categoryStruct)); err != nil {
 			return nil, err
 		}
 		categories = append(categories, categoryStruct)
@@ -108,8 +111,8 @@ func getLikeCount(db *database.Database, publicationId string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	if len(count) != 1 {
-		return 0, errors.New("error getting number of likes")
+	if err := dbutils.DatabaseResultNotEmpty(count); err != nil {
+		return 0, err
 	}
 	likes, err := dbutils.ParseInt(count[0]["count"])
 	if err != nil {
@@ -145,7 +148,7 @@ func getComments(db *database.Database, publicationId string) ([]Comment, error)
 	}
 	for i := 0; i < len(comments); i++ {
 		var comm Comment
-		if err := dbutils.FillStructFromDb(comments[i], &comm); err != nil {
+		if err := dbmapper.FillStructFromDb(comments[i], typeopr.Ptr{}.New(&comm)); err != nil {
 			return nil, err
 		}
 		user, err := hprofile.GetUserByAuthId(db, comm.AuthorId)

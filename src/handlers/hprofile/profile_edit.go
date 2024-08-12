@@ -7,13 +7,17 @@ import (
 
 	"github.com/uwine4850/foozy/pkg/builtin/auth"
 	"github.com/uwine4850/foozy/pkg/database"
+	"github.com/uwine4850/foozy/pkg/database/dbmapper"
 	"github.com/uwine4850/foozy/pkg/database/dbutils"
 	"github.com/uwine4850/foozy/pkg/interfaces"
+	"github.com/uwine4850/foozy/pkg/interfaces/itypeopr"
 	"github.com/uwine4850/foozy/pkg/namelib"
 	"github.com/uwine4850/foozy/pkg/router"
 	"github.com/uwine4850/foozy/pkg/router/cookies"
 	"github.com/uwine4850/foozy/pkg/router/form"
+	"github.com/uwine4850/foozy/pkg/router/form/formmapper"
 	"github.com/uwine4850/foozy/pkg/router/object"
+	"github.com/uwine4850/foozy/pkg/typeopr"
 	"github.com/uwine4850/pixarea/src/cnf"
 	"github.com/uwine4850/pixarea/src/cnf/pnames"
 )
@@ -57,7 +61,7 @@ func (v *ProfileEditView) Context(w http.ResponseWriter, r *http.Request, manage
 			return nil, err
 		}
 		var auth auth.AuthItem
-		if err := dbutils.FillStructFromDb(authDb, &auth); err != nil {
+		if err := dbmapper.FillStructFromDb(authDb, typeopr.Ptr{}.New(&auth)); err != nil {
 			return nil, err
 		}
 		user.Auth = auth
@@ -101,8 +105,8 @@ func ProfileEditPostHNDL(w http.ResponseWriter, r *http.Request, manager interfa
 		return func() { router.ServerError(w, err.Error(), manager) }
 	}
 	var profileForm ProfileEditForm
-	fillForm := form.NewFillableFormStruct(&profileForm)
-	if err := form.FillStructFromForm(frm, fillForm, []string{"delete_avatar", "delete_background"}); err != nil {
+	fillFormPtr := typeopr.Ptr{}.New(&profileForm)
+	if err := formmapper.FillStructFromForm(frm, fillFormPtr, []string{"delete_avatar", "delete_background"}); err != nil {
 		return func() { router.ServerError(w, err.Error(), manager) }
 	}
 
@@ -125,11 +129,11 @@ func ProfileEditPostHNDL(w http.ResponseWriter, r *http.Request, manager interfa
 	createImages := []string{}
 	profileDbData := map[string]any{}
 
-	if err := handleImages(w, db, &authUID, fillForm, &profileForm, &profileDbData, &removedImages, &createImages, manager); err != nil {
+	if err := handleImages(w, db, &authUID, fillFormPtr, &profileForm, &profileDbData, &removedImages, &createImages, manager); err != nil {
 		return func() { router.ServerError(w, err.Error(), manager) }
 	}
-	profileDbData["name"] = fillForm.GetOrDef("Name", 0).(string)
-	profileDbData["description"] = fillForm.GetOrDef("Description", 0).(string)
+	profileDbData["name"] = profileForm.Name[0]
+	profileDbData["description"] = profileForm.Description[0]
 	if _, err := db.SyncQ().Update("user", profileDbData, dbutils.WHEquals(dbutils.WHValue{"auth": authUID.UID}, "")); err != nil {
 		if err := rollbackCreateImages(createImages); err != nil {
 			return func() { router.ServerError(w, err.Error(), manager) }
@@ -144,27 +148,28 @@ func ProfileEditPostHNDL(w http.ResponseWriter, r *http.Request, manager interfa
 	}
 }
 
-func handleImages(w http.ResponseWriter, db *database.Database, authUID *auth.AuthCookie, fillForm *form.FillableFormStruct, profileForm *ProfileEditForm,
+func handleImages(w http.ResponseWriter, db *database.Database, authUID *auth.AuthCookie, fillForm itypeopr.IPtr, profileForm *ProfileEditForm,
 	profileDbData *map[string]any, removedImages *[]string, createImages *[]string, manager interfaces.IManager) error {
 	var profileFromDb User
-	if fillForm.GetOrDef("DeleteAvatar", 0) != "" || fillForm.GetOrDef("DeleteBackground", 0) != "" {
+	prifileEditForm := fillForm.Ptr().(*ProfileEditForm)
+	if prifileEditForm.DeleteAvatar != nil || prifileEditForm.DeleteBackground != nil {
 		user, err := db.SyncQ().Select([]string{"*"}, "user", dbutils.WHEquals(dbutils.WHValue{"auth": authUID.UID}, "AND"), 1)
 		if err != nil {
 			return err
 		}
-		if err := dbutils.FillStructFromDb(user[0], &profileFromDb); err != nil {
+		if err := dbmapper.FillStructFromDb(user[0], typeopr.Ptr{}.New(&profileFromDb)); err != nil {
 			return err
 		}
 	}
 
-	if fillForm.GetOrDef("DeleteAvatar", 0).(string) != "" {
+	if prifileEditForm.DeleteAvatar != nil {
 		(*profileDbData)["avatar"] = ""
 		if profileFromDb.Avatar != "" {
 			*removedImages = append(*removedImages, profileFromDb.Avatar)
 		}
 		cookies.SetStandartCookie(w, pnames.COOKIE_USER_AVATAR, "", "/", 0)
 	} else {
-		if !reflect.ValueOf(fillForm.GetOrDef("Avatar", 0)).IsZero() {
+		if !reflect.ValueOf(prifileEditForm.Avatar).IsZero() {
 			var avatarPath string
 			if err := form.SaveFile(w, profileForm.Avatar[0].Header, "src/media/avatars", &avatarPath, manager); err != nil {
 				return err
@@ -174,13 +179,13 @@ func handleImages(w http.ResponseWriter, db *database.Database, authUID *auth.Au
 			cookies.SetStandartCookie(w, pnames.COOKIE_USER_AVATAR, avatarPath, "/", 0)
 		}
 	}
-	if fillForm.GetOrDef("DeleteBackground", 0).(string) != "" {
+	if prifileEditForm.DeleteBackground != nil {
 		(*profileDbData)["bg_image"] = ""
 		if profileFromDb.BgImage != "" {
 			*removedImages = append(*removedImages, profileFromDb.BgImage)
 		}
 	} else {
-		if !reflect.ValueOf(fillForm.GetOrDef("Background", 0)).IsZero() {
+		if !reflect.ValueOf(prifileEditForm.Background).IsZero() {
 			var backgroundPath string
 			if err := form.SaveFile(w, profileForm.Background[0].Header, "src/media/backgrounds", &backgroundPath, manager); err != nil {
 				return err

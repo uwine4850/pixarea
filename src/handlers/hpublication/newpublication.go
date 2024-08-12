@@ -9,11 +9,13 @@ import (
 	"time"
 
 	"github.com/uwine4850/foozy/pkg/database"
+	"github.com/uwine4850/foozy/pkg/database/dbmapper"
 	"github.com/uwine4850/foozy/pkg/database/dbutils"
 	"github.com/uwine4850/foozy/pkg/interfaces"
 	"github.com/uwine4850/foozy/pkg/router"
 	"github.com/uwine4850/foozy/pkg/router/form"
 	"github.com/uwine4850/foozy/pkg/router/object"
+	"github.com/uwine4850/foozy/pkg/typeopr"
 	"github.com/uwine4850/foozy/pkg/utils/fstring"
 	"github.com/uwine4850/pixarea/src/cnf"
 	"github.com/uwine4850/pixarea/src/cnf/pnames"
@@ -63,7 +65,7 @@ func NewPublicationPageHNDL(w http.ResponseWriter, r *http.Request, manager inte
 	categories := []PublicationCategory{}
 	for i := 0; i < len(categoriesDB); i++ {
 		var category PublicationCategory
-		if err := dbutils.FillStructFromDb(categoriesDB[i], &category); err != nil {
+		if err := dbmapper.FillStructFromDb(categoriesDB[i], typeopr.Ptr{}.New(&category)); err != nil {
 			return func() { router.ServerError(w, err.Error(), manager) }
 		}
 		categories = append(categories, category)
@@ -100,20 +102,19 @@ func (v *NewPublicationView) Context(w http.ResponseWriter, r *http.Request, man
 	if err != nil {
 		return nil, err
 	}
-	pubForm := formInterface.(NewPublicationForm)
-	filledForm := form.NewFillableFormStruct(&pubForm)
+	publicationForm := formInterface.(NewPublicationForm)
 
 	// Validation of form data.
-	if err := imageSizeValidation(pubForm.Images); err != nil {
+	if err := imageSizeValidation(publicationForm.Images); err != nil {
 		return nil, err
 	}
-	if err := selectCategoriesValidation(pubForm.Categories); err != nil {
+	if err := selectCategoriesValidation(publicationForm.Categories); err != nil {
 		return nil, err
 	}
 
 	// Obtaining IDs of selected categories from the database.
 	// Get the current authentication ID.
-	categories, err := getCategories(db, pubForm.Categories)
+	categories, err := getCategories(db, publicationForm.Categories)
 	if err != nil {
 		return nil, err
 	}
@@ -128,8 +129,8 @@ func (v *NewPublicationView) Context(w http.ResponseWriter, r *http.Request, man
 	db.BeginTransaction()
 	publication := PublicationDB{
 		Author:      currentAuth.UID,
-		Name:        filledForm.GetOrDef("Name", 0).(string),
-		Description: filledForm.GetOrDef("Description", 0).(string),
+		Name:        publicationForm.Name[0],
+		Description: publicationForm.Description[0],
 		Category1:   categories[0],
 		Category2:   categories[1],
 		Date:        time.Now().Format("2006-01-02 15:04:05"),
@@ -141,7 +142,7 @@ func (v *NewPublicationView) Context(w http.ResponseWriter, r *http.Request, man
 		}
 		return nil, err
 	}
-	createdImages, err := createImages(w, pubForm.Images, manager)
+	createdImages, err := createImages(w, publicationForm.Images, manager)
 	if err != nil {
 		return nil, err
 	}
@@ -175,7 +176,7 @@ func selectCategoriesValidation(categories []string) error {
 }
 
 func createPublicationInTable(db *database.Database, publicationDb PublicationDB) (any, error) {
-	publicationParams, err := dbutils.ParamsValueFromStruct(&publicationDb, []string{"id", "category1", "category2"})
+	publicationParams, err := dbmapper.ParamsValueFromStruct(typeopr.Ptr{}.New(&publicationDb), []string{"id", "category1", "category2"})
 	if err != nil {
 		return nil, err
 	}

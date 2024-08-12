@@ -7,8 +7,10 @@ import (
 	"github.com/uwine4850/foozy/pkg/database"
 	"github.com/uwine4850/foozy/pkg/database/dbutils"
 	"github.com/uwine4850/foozy/pkg/interfaces"
+	"github.com/uwine4850/foozy/pkg/interfaces/itypeopr"
 	"github.com/uwine4850/foozy/pkg/router"
-	"github.com/uwine4850/foozy/pkg/router/form"
+	"github.com/uwine4850/foozy/pkg/router/form/formmapper"
+	"github.com/uwine4850/foozy/pkg/typeopr"
 	"github.com/uwine4850/pixarea/src/cnf"
 	"github.com/uwine4850/pixarea/src/utils/formutils"
 )
@@ -30,11 +32,11 @@ func RegisterHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IMa
 }
 
 func RegisterPostHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
-	fillableRegisterForm, err := parseRegisterForm(r)
+	registerFormPtr, err := parseRegisterForm(r)
 	if err != nil {
 		return func() { router.RedirectError(w, r, "/register", err.Error(), manager) }
 	}
-	registerForm := fillableRegisterForm.GetStruct().(*RegisterForm)
+	registerForm := registerFormPtr.Ptr().(*RegisterForm)
 
 	db := database.NewDatabase(cnf.DB_ARGS)
 	if err := db.Connect(); err != nil {
@@ -51,20 +53,20 @@ func RegisterPostHNDL(w http.ResponseWriter, r *http.Request, manager interfaces
 	return func() { http.Redirect(w, r, "/login", http.StatusFound) }
 }
 
-func parseRegisterForm(r *http.Request) (*form.FillableFormStruct, error) {
+func parseRegisterForm(r *http.Request) (itypeopr.IPtr, error) {
 	registerForm := &RegisterForm{}
-	fillRegisterForm := form.NewFillableFormStruct(registerForm)
-	requiredFields, err := form.FieldsName(fillRegisterForm, []string{})
+	registerFormPtr := typeopr.Ptr{}.New(registerForm)
+	requiredFields, err := formmapper.FieldsName(registerFormPtr, []string{})
 	if err != nil {
 		return nil, err
 	}
-	if err := formutils.ParseForm(r, fillRegisterForm, []string{}, requiredFields); err != nil {
+	if err := formutils.ParseForm(r, registerFormPtr, []string{}, requiredFields); err != nil {
 		return nil, err
 	}
 	if registerForm.Password[0] != registerForm.RepeatPassword[0] {
 		return nil, err
 	}
-	return fillRegisterForm, nil
+	return registerFormPtr, nil
 }
 
 func registerUser(w http.ResponseWriter, db *database.Database, manager interfaces.IManager, registerForm *RegisterForm) error {
