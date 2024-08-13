@@ -10,7 +10,6 @@ import (
 
 	"github.com/uwine4850/foozy/pkg/database"
 	"github.com/uwine4850/foozy/pkg/database/dbmapper"
-	"github.com/uwine4850/foozy/pkg/database/dbutils"
 	"github.com/uwine4850/foozy/pkg/interfaces"
 	"github.com/uwine4850/foozy/pkg/router"
 	"github.com/uwine4850/foozy/pkg/router/form"
@@ -45,38 +44,6 @@ type NewPublicationForm struct {
 	Description []string        `form:"description"`
 	Categories  []string        `form:"catedories"`
 	Images      []form.FormFile `form:"images" ext:".png .jpg .jpeg"`
-}
-
-func NewPublicationPageHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
-	router.CatchRedirectError(r, manager)
-	db := database.NewDatabase(cnf.DB_ARGS)
-	if err := db.Connect(); err != nil {
-		return func() { router.ServerError(w, err.Error(), manager) }
-	}
-	defer func() {
-		if err := db.Close(); err != nil {
-			router.ServerError(w, err.Error(), manager)
-		}
-	}()
-	categoriesDB, err := db.SyncQ().QB().Select("*", pnames.CATEGORIES_TABLE).Ex()
-	if err != nil {
-		return func() { router.ServerError(w, err.Error(), manager) }
-	}
-	categories := []PublicationCategory{}
-	for i := 0; i < len(categoriesDB); i++ {
-		var category PublicationCategory
-		if err := dbmapper.FillStructFromDb(categoriesDB[i], typeopr.Ptr{}.New(&category)); err != nil {
-			return func() { router.ServerError(w, err.Error(), manager) }
-		}
-		categories = append(categories, category)
-	}
-
-	manager.Render().SetContext(map[string]interface{}{"categories": categories})
-	manager.Render().SetTemplatePath("src/templates/publication/new_publication.html")
-	if err := manager.Render().RenderTemplate(w, r); err != nil {
-		return func() { router.ServerError(w, err.Error(), manager) }
-	}
-	return func() {}
 }
 
 type NewPublicationView struct {
@@ -114,7 +81,10 @@ func (v *NewPublicationView) Context(w http.ResponseWriter, r *http.Request, man
 
 	// Obtaining IDs of selected categories from the database.
 	// Get the current authentication ID.
-	categories, err := getCategories(db, publicationForm.Categories)
+	categorySubView := CategorySubView{
+		DB: db,
+	}
+	categories, err := categorySubView.CategoriesByName(publicationForm.Categories)
 	if err != nil {
 		return nil, err
 	}
@@ -186,26 +156,6 @@ func createPublicationInTable(db *database.Database, publicationDb PublicationDB
 	}
 
 	return info["id"], nil
-}
-
-func getCategories(db *database.Database, categoriesName []string) ([]string, error) {
-	categories := make([]string, 2)
-	for i := 0; i < len(categoriesName); i++ {
-		categoryID, err := db.SyncQ().Select([]string{"id"}, pnames.CATEGORIES_TABLE,
-			dbutils.WHEquals(dbutils.WHValue{"name": categoriesName[i]}, ""), 1)
-		if err != nil {
-			return nil, err
-		}
-		if len(categoryID) != 1 {
-			return nil, nil
-		}
-		id, err := dbutils.ParseInt(categoryID[0]["id"])
-		if err != nil {
-			return nil, err
-		}
-		categories[i] = strconv.Itoa(id)
-	}
-	return categories, nil
 }
 
 func createImages(w http.ResponseWriter, images []form.FormFile, manager interfaces.IManager) ([]string, error) {

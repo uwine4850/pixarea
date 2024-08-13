@@ -33,7 +33,11 @@ func PublicationLikeHNDL(w http.ResponseWriter, r *http.Request, manager interfa
 	if err != nil {
 		return utils.SuccessJsonError(w, err)
 	}
-	isLike, err := LikeExist(db, publicationId, currentAuth.UID)
+	likeSubView := LikeSubView{
+		PublicationId: publicationId,
+		DB:            db,
+	}
+	isLike, err := likeSubView.LikeExist(currentAuth.UID)
 	if err != nil {
 		return utils.SuccessJsonError(w, err)
 	}
@@ -47,20 +51,6 @@ func PublicationLikeHNDL(w http.ResponseWriter, r *http.Request, manager interfa
 			return utils.SuccessJsonError(w, err)
 		}
 		return func() { router.SendJson(map[string]string{"success": "true", "addLike": "true"}, w) }
-	}
-}
-
-func LikeExist(db *database.Database, publicationId string, authId string) (bool, error) {
-	like, err := db.SyncQ().Select([]string{"*"}, pnames.PUBLICATION_LIKES_TABLE, dbutils.WHEquals(
-		dbutils.WHValue{"publication": publicationId, "auth_id": authId}, "AND",
-	), 1)
-	if err != nil {
-		return false, err
-	}
-	if len(like) == 1 {
-		return true, nil
-	} else {
-		return false, nil
 	}
 }
 

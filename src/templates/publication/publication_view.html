@@ -139,14 +139,12 @@ New publication
                             {{ comment.Text }}
                         </div>
                         <form class="comment-footer">
-                            <!-- <input type="hidden" name="comm_id" value="{{ comment.Id }}">
-                            <input type="hidden" id="comm_publication_id" value="{{ publication.Id }}"> -->
                             <button data-reply-name="{{ comment.Author.Name }}" data-reply-id="{{ comment.Id }}" type="button" class="reply-button">
                                 Reply
                             </button>
                             <button class="comment-open-close-reply">
                                 <a>
-                                    Answers
+                                    Answers {{ comment.ReplyCount }}
                                     <img src="/static/img/icons/expand_right.svg" alt="">
                                 </a>
                             </button>
