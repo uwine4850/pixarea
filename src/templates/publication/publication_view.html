@@ -113,7 +113,7 @@ New publication
                         <!-- HIDE CLASS publication-comment-item-hidden -->
                         <div class="publication-comment-item publication-comment-item-hidden">
                             <!-- ENABLE CLASS PCH-enable -->
-                            <button class="publication-comment-item-hidden-panel PCH-enable">
+                            <button class="publication-comment-item-hidden-panel PCH-enable" data-comm-id="{{ comment.Id }}" data-publication-id="{{ publication.Id }}">
                     {% else %}
                         <!-- HIDE CLASS publication-comment-item-hidden -->
                         <div class="publication-comment-item">
@@ -142,7 +142,7 @@ New publication
                             <button data-reply-name="{{ comment.Author.Name }}" data-reply-id="{{ comment.Id }}" type="button" class="reply-button">
                                 Reply
                             </button>
-                            <button class="comment-open-close-reply">
+                            <button type="button" data-comment-id="{{ comment.Id }}" class="comment-open-close-reply comment_answers_button">
                                 <a>
                                     Answers {{ comment.ReplyCount }}
                                     <img src="/static/img/icons/expand_right.svg" alt="">
