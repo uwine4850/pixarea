@@ -1,0 +1,61 @@
+@import "../mixin.scss";
+@import "../vars.scss";
+
+.new-publication-form{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    background-color: $color_bacground1;
+    margin: 0 auto;
+    height: calc(100vh - 70px);
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    .new-publication-title{
+        margin-bottom: 5px;
+    }
+}
+
+.new-publication-dropdown-wrapper{
+    background: #000;
+    width: fit-content;
+    .new-publication-categories-btn{
+        @include mx_button($color_button);
+        padding: 10px 0;
+        font-size: 1.1rem;
+        border-radius: 4px;
+    }
+    .new-publication-dropdown-for-btn{
+        left: 0;
+        top: 50px;
+        .dropdown-for-btn-checkbox-item{
+            width: fit-content;
+        }
+    }
+}
+
+.load-images{
+    display: flex;
+    margin-top: 10px;
+    .load-image{
+        width: 100px;
+        height: 100px;
+        margin-right: 10px;
+        background: #000;
+        display: inline-block;
+        user-select: none;
+        overflow: hidden;
+        img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+}
+
+.publish-button{
+    @include mx_button($color_button);
+    margin-left: auto;
+    padding: 10px 0;
+    border-radius: 4px;
+}

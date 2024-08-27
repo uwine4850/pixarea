@@ -1,0 +1,64 @@
+@import "../mixin.scss";
+@import "../form.scss";
+
+.auth-panel{
+    width: 30%;
+    margin: 0 auto;
+    margin-top: 10%;
+    background-color: $color_bacground1;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 10px;
+    .auth-panel-title{
+        margin-bottom: 5px;
+    }
+    .form-block-auth{
+        margin-bottom: 10px;
+    }
+    .auth-support-link{
+        color: $color_secondary_text;
+        font-size: 1.2rem;
+        transition: .1s;
+        &:hover{
+            color: blueviolet;
+        }
+    }
+    .auth-button{
+        @include mx_button($color_button);
+        margin-top: 10px;
+        margin-left: auto;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-panel{
+        width: 90%;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .auth-panel{
+        width: 80%;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .auth-panel{
+        width: 50%;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1200px) {
+    .auth-panel{
+        width: 50%;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1200px) {
+    .auth-panel{
+        width: 40%;
+    }
+}

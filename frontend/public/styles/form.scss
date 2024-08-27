@@ -1,0 +1,60 @@
+@import "./mixin.scss";
+
+.form-block{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    .form-block-item{
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+        label{
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        input, textarea{
+            @include mx_def_input;
+            width: 100%;
+            font-size: 1.2rem;
+            font-family: $fort_chivo;
+            background-color: $color_accent_1;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        textarea{
+            resize: none;
+            height: 100px;
+        }
+        select{
+            padding: 10px;
+            background-color: $color_accent_1;
+            border: none;
+            height: fit-content;
+            outline: none;
+            option{
+                font-size: 1.2rem;
+            }
+        }
+    }
+    .form-block-item-checkbox{
+        display: flex;
+        flex-direction: row;
+        label{
+            margin: auto 0;
+            width: fit-content;
+        }
+        input{
+            background-color: transparent;
+            margin: 0;
+            width: fit-content;
+            margin-right: 10px;
+        }
+    }
+    .form-block-item-inner-checkbox{
+        margin-left: 20px;
+        label{
+            font-weight: 400;
+        }
+    }
+}

@@ -1,0 +1,36 @@
+@mixin mx_button($color){
+    width: fit-content;
+    background-color: $color;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: .1s;
+    display: flex;
+    &:hover{
+        background-color: $color_button_hover;
+        cursor: pointer;
+    }
+    a{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        white-space: nowrap;
+        height: 100%;
+        padding: 0 20px;
+        display: flex;
+        text-decoration: none;
+        color: #fff;
+    }
+}
+
+@mixin mx_def_button{
+    border: none;
+    outline: none;
+}
+
+@mixin mx_def_input{
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+}
