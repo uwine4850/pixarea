@@ -1,26 +1,26 @@
 import React from "react";
+import { CDropdown, TargetButton, Items, CheckboxItem } from "./Dropdown";
 
 const HeaderDropdownButtons: React.FC = () => {
   return (
-    <div className="dropdown-wrapper header-dropdown-wrapper">
-      <button className="header-btn header-btn-dropdown-style header-btn-dropdown">
-        <a href="#">Categories</a>
-      </button>
-      <div className="dropdown-for-btn dropdown-for-btn-hide">
-        <div className="dropdown-for-btn-checkbox-item">
-          <input type="checkbox" id="ctgr_PIXELART" />
-          <label htmlFor="ctgr_PIXELART">Pixelart</label>
-        </div>
-        <div className="dropdown-for-btn-checkbox-item">
-          <input type="checkbox" id="ctgr_3D_CHARACTER" />
-          <label htmlFor="ctgr_3D_CHARACTER">3D Character</label>
-        </div>
-        <div className="dropdown-for-btn-checkbox-item">
-          <input type="checkbox" id="ctgr_GAMEDEV" />
-          <label htmlFor="ctgr_GAMEDEV">Gamedev</label>
-        </div>
-      </div>
-    </div>
+    <CDropdown>
+    <TargetButton className="header-btn header-btn-dropdown-style header-btn-dropdown">
+      <a href="#">Categories</a>
+    </TargetButton>
+    <Items>
+      <CheckboxItem
+        id="ctgr_PIXELART"
+        name="category"
+        label="Pixelart"
+      />
+      <CheckboxItem
+        id="ctgr_3D_CHARACTER"
+        name="category"
+        label="3D Character"
+      />
+      <CheckboxItem id="ctgr_GAMEDEV" name="category" label="Gamedev" />
+    </Items>
+  </CDropdown>
   );
 };
 

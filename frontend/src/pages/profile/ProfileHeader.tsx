@@ -1,42 +1,41 @@
-import Profile from "./Profile";
-import Search from "./Search";
-import HeaderDropdownButtons from "./HeaderDropdownButtons";
+import React from "react";
+import Profile from "../components/Profile";
+import Search from "../components/Search";
+import HeaderDropdownButtons from "../components/HeaderDropdownButtons";
 
-const Header: React.FC = () => {
+const ProfileHeader: React.FC = () => {
   return (
     <>
-      {/* Base header */}
       <header className="default-heder default-heder-media">
         <div className="header-center">
           <Profile userAvatar="/images/default/default.jpg" userId="1" />
           <button className="header-btn">
-            <a href="#">Explore</a>
+            <a href="#">Publications</a>
           </button>
           <button className="header-btn btn-active">
-            <a href="#">Subscribed</a>
+            <a href="#">Collections</a>
           </button>
           <Search />
-          <HeaderDropdownButtons/>
+          <HeaderDropdownButtons />
         </div>
       </header>
-
-      {/* Mini-header */}
+      {/* MINI HEADER */}
       <header className="default-heder mini-header">
         <div className="header-center mini-header-center">
           <div className="mini-header-side" id="mhs1">
             <Profile userAvatar="/images/default/default.jpg" userId="1" />
             <button className="header-btn">
-              <a href="#">Explore</a>
+              <a href="#">Publications</a>
             </button>
             <button className="header-btn btn-active">
-              <a href="#">Subscribed</a>
+              <a href="#">Collections</a>
             </button>
             <button
               className="mini-header-search-btn"
               id="mini-header-search-btn"
             >
               <a href="#">
-                <img src="/static/img/icons/search.svg" alt="Search" />
+                <img src="/static/img/icons/search.svg" alt="" />
               </a>
             </button>
           </div>
@@ -46,16 +45,21 @@ const Header: React.FC = () => {
               id="mini-header-close-search"
             >
               <a href="#">
-                <img src="/static/img/icons/close.svg" alt="Close" />
+                <img src="/static/img/icons/close.svg" alt="" />
               </a>
             </button>
             <Search />
-            <HeaderDropdownButtons/>
+            <HeaderDropdownButtons />
           </div>
         </div>
+        <button className="profile-header-back" id="profile-header-back">
+          <a>
+            <img src="/static/img/icons/back.svg" alt="" />
+          </a>
+        </button>
       </header>
     </>
   );
 };
 
-export default Header;
+export default ProfileHeader;

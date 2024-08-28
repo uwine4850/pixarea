@@ -4,7 +4,7 @@ interface LayoutContextType {
   header?: ReactNode;
   leftSide?: ReactNode;
   rightSide?: ReactNode;
-  content: ReactNode;
+  content?: ReactNode;
 }
 
 const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
