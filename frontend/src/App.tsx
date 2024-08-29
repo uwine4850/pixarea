@@ -5,6 +5,7 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ProfileView from './pages/profile/ProfileView';
 import ProfileEdit from './pages/profile/ProfileEdit';
+import PublicationView from './pages/publication/PublicationView';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/profile" element={<ProfileView />} />
       <Route path="/profile/edit" element={<ProfileEdit />} />
+      <Route path="/publication" element={<PublicationView />} />
       </Routes>
     </Router>
   );

@@ -2,14 +2,16 @@ import React, { useEffect, useRef } from "react";
 import { Dropdown, closeDropdown } from "../../scripts/dropdown";
 
 interface CDropdownProps {
+  className?: string;
+  targetButtonClass: string;
   children: React.ReactNode;
 }
 
-export const CDropdown: React.FC<CDropdownProps> = ({ children }) => {
+export const CDropdown: React.FC<CDropdownProps> = ({ className, targetButtonClass, children }) => {
   const dropdownRef = useRef<Dropdown | null>(null);
 
   useEffect(() => {
-    dropdownRef.current = new Dropdown("header-btn-dropdown");
+    dropdownRef.current = new Dropdown(targetButtonClass);
     dropdownRef.current.run();
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -24,7 +26,7 @@ export const CDropdown: React.FC<CDropdownProps> = ({ children }) => {
     };
   }, []);
   return (
-    <div className="dropdown-wrapper header-dropdown-wrapper">{children}</div>
+    <div className={`dropdown-wrapper ${className}`}>{children}</div>
   );
 };
 
@@ -41,12 +43,13 @@ export const TargetButton: React.FC<TargetButtonProps> = ({
 };
 
 interface ItemsProps {
+  className?: string;
   children: React.ReactNode;
 }
 
-export const Items: React.FC<ItemsProps> = ({ children }) => {
+export const Items: React.FC<ItemsProps> = ({ className, children }) => {
   return (
-    <div className="dropdown-for-btn dropdown-for-btn-hide">{children}</div>
+    <div className={`dropdown-for-btn dropdown-for-btn-hide ${className}`}>{children}</div>
   );
 };
 
@@ -74,9 +77,9 @@ export const CheckboxItem: React.FC<CheckboxItemProps> = ({
 interface ButtonItemProps {
   id?: string;
   className?: string;
-  dataAttributes: Record<string, string>;
-  onClick?: (target: HTMLElement) => void;
-  children: React.ReactNode;
+  dataAttributes?: Record<string, string>;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  children?: React.ReactNode;
 }
 
 export const ButtonItem: React.FC<ButtonItemProps> = ({
@@ -86,16 +89,16 @@ export const ButtonItem: React.FC<ButtonItemProps> = ({
   onClick,
   children,
 }) => {
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (onClick) {
-      onClick(event.currentTarget);
-    }
-  };
+  // const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  //   if (onClick) {
+  //     onClick(event.currentTarget);
+  //   }
+  // };
   return (
     <button
       id={id}
       className={className}
-      onClick={handleClick}
+      onClick={onClick}
       {...dataAttributes}
     >
       {children}

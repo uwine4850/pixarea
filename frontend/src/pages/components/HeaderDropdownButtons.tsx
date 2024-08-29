@@ -3,7 +3,7 @@ import { CDropdown, TargetButton, Items, CheckboxItem } from "./Dropdown";
 
 const HeaderDropdownButtons: React.FC = () => {
   return (
-    <CDropdown>
+    <CDropdown className="header-dropdown-wrapper" targetButtonClass="header-btn-dropdown">
     <TargetButton className="header-btn header-btn-dropdown-style header-btn-dropdown">
       <a href="#">Categories</a>
     </TargetButton>
