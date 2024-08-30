@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { LayoutProvider, Layout } from "../LayoutContext";
 import Header from "../components/Header";
+import {useCsrfToken} from "../../scripts/csrf_token";
 
 const content = (
   <div className="content">
@@ -15,6 +16,8 @@ const content = (
 );
 
 const Home: React.FC = () => {
+  const csrfToken = useCsrfToken();
+  console.log(csrfToken);
   return (
     <LayoutProvider
       value={{

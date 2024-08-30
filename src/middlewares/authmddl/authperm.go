@@ -16,7 +16,7 @@ func AuthPermissions(w http.ResponseWriter, r *http.Request, manager interfaces.
 		router.ServerError(w, "url pattern not exist", manager)
 		return
 	}
-	if fslice.SliceContains([]string{"/login", "/login-post", "/register", "/register-post"}, urlPattern.(string)) {
+	if fslice.SliceContains([]string{"/login", "/login-post", "/register", "/register-post", "/api/login"}, urlPattern.(string)) {
 		return
 	}
 	for i := 0; i < len(r.Cookies()); i++ {

@@ -10,16 +10,20 @@ import (
 	"github.com/uwine4850/foozy/pkg/router"
 	"github.com/uwine4850/foozy/pkg/router/manager"
 	"github.com/uwine4850/foozy/pkg/router/middlewares"
+	"github.com/uwine4850/foozy/pkg/router/rest"
 	"github.com/uwine4850/foozy/pkg/router/tmlengine"
 	"github.com/uwine4850/foozy/pkg/server"
 	"github.com/uwine4850/foozy/pkg/server/globalflow"
+	"github.com/uwine4850/pixarea/src/api/authapi"
+	"github.com/uwine4850/pixarea/src/api/tokenapi"
 	"github.com/uwine4850/pixarea/src/cnf"
+	"github.com/uwine4850/pixarea/src/cnf/messages"
 	"github.com/uwine4850/pixarea/src/handlers"
 	"github.com/uwine4850/pixarea/src/handlers/hauth"
 	"github.com/uwine4850/pixarea/src/handlers/hprofile"
 	"github.com/uwine4850/pixarea/src/handlers/hpublication"
 	"github.com/uwine4850/pixarea/src/handlers/tmplfilters"
-	"github.com/uwine4850/pixarea/src/middlewares/authmddl"
+	"github.com/uwine4850/pixarea/src/middlewares/securitymddll"
 	"github.com/uwine4850/pixarea/src/middlewares/usermddl"
 )
 
@@ -32,15 +36,17 @@ func main() {
 		}
 	}(db)
 	mddl := middlewares.NewMiddleware()
-	mddl.HandlerMddl(0, authmddl.UpdKeys(db))
+	// mddl.HandlerMddl(0, authmddl.UpdKeys(db))
 	mddl.HandlerMddl(1, builtin_mddl.GenerateAndSetCsrf)
-	mddl.HandlerMddl(2, authmddl.AuthPermissions)
+	// mddl.HandlerMddl(2, authmddl.AuthPermissions)
+	mddl.AsyncHandlerMddl(securitymddll.Cors)
 	mddl.AsyncHandlerMddl(usermddl.ParseUserCookies)
 
 	render, err := tmlengine.NewRender()
 	if err != nil {
 		panic(err)
 	}
+
 	tmplfilters.RegisterFilters()
 
 	newManager := manager.NewManager(render)
@@ -49,6 +55,13 @@ func main() {
 	newManager.Config().DebugConfig().Debug(true)
 	newManager.Config().PrintLog(true)
 	newManager.Config().Key().Generate32BytesKeys()
+
+	dto := rest.NewDTO()
+	dto.AllowedMessages(messages.AllowedMessages)
+	dto.Messages(messages.MessagesList)
+	if err := dto.Generate(); err != nil {
+		panic(err)
+	}
 
 	newRouter := router.NewRouter(newManager)
 	newRouter.SetMiddleware(mddl)
@@ -70,7 +83,9 @@ func main() {
 	newRouter.Post("/publication-like", hpublication.PublicationLikeHNDL)
 	newRouter.Post("/publication-comment", hpublication.PublicationCommentHNDL)
 	newRouter.Post("/publication-comment-hide", hpublication.PublicationCommentHideHNDL)
-
+	newRouter.Get("/publication-load-answers", hpublication.LoadAnswersHNDL)
+	newRouter.Post("/api/login", authapi.LoginPostHNDL)
+	newRouter.Get("/api/csrf", tokenapi.CSRTToken)
 	gf := globalflow.NewGlobalFlow(10)
 	gf.AddNotWaitTask(bglobalflow.KeyUpdater(3600))
 	gf.Run(newManager)

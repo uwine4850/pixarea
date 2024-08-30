@@ -7,7 +7,11 @@ interface CDropdownProps {
   children: React.ReactNode;
 }
 
-export const CDropdown: React.FC<CDropdownProps> = ({ className, targetButtonClass, children }) => {
+export const CDropdown: React.FC<CDropdownProps> = ({
+  className,
+  targetButtonClass,
+  children,
+}) => {
   const dropdownRef = useRef<Dropdown | null>(null);
 
   useEffect(() => {
@@ -25,9 +29,7 @@ export const CDropdown: React.FC<CDropdownProps> = ({ className, targetButtonCla
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
-  return (
-    <div className={`dropdown-wrapper ${className}`}>{children}</div>
-  );
+  return <div className={`dropdown-wrapper ${className}`}>{children}</div>;
 };
 
 interface TargetButtonProps {
@@ -49,7 +51,9 @@ interface ItemsProps {
 
 export const Items: React.FC<ItemsProps> = ({ className, children }) => {
   return (
-    <div className={`dropdown-for-btn dropdown-for-btn-hide ${className}`}>{children}</div>
+    <div className={`dropdown-for-btn dropdown-for-btn-hide ${className}`}>
+      {children}
+    </div>
   );
 };
 
@@ -89,18 +93,8 @@ export const ButtonItem: React.FC<ButtonItemProps> = ({
   onClick,
   children,
 }) => {
-  // const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-  //   if (onClick) {
-  //     onClick(event.currentTarget);
-  //   }
-  // };
   return (
-    <button
-      id={id}
-      className={className}
-      onClick={onClick}
-      {...dataAttributes}
-    >
+    <button id={id} className={className} onClick={onClick} {...dataAttributes}>
       {children}
     </button>
   );

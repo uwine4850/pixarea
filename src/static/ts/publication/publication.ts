@@ -5,6 +5,8 @@ import { sendLikeForm } from "./publication_like";
 import { sendCommentForm } from "./publication_comment";
 import { sendNewPublicationForm } from "./publication_send_form";
 import { sendHideCommentForm } from "./publication_hide";
+import { sendLoadAswersForm } from "./load_answers";
+import { BuildComment } from "./comment";
 
 
 export function publicationRunDropdown(): Dropdown {
@@ -81,3 +83,6 @@ sendCommentForm("publication-comment-form", function () {
     closeDropdown(drpd, clickTarget);
   });
 });
+sendLoadAswersForm("comment_answers_button");
+let bb = new BuildComment("commentNode", "", "");
+bb.insert();
