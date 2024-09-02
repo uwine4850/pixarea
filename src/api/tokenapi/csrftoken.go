@@ -9,7 +9,7 @@ import (
 	"github.com/uwine4850/pixarea/src/cnf/messages"
 )
 
-func CSRTToken(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
+func CSRFToken(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
 	response := messages.CSRFTokenResponse{}
 	token, err := r.Cookie(namelib.ROUTER.COOKIE_CSRF_TOKEN)
 	if err != nil {
@@ -18,4 +18,8 @@ func CSRTToken(w http.ResponseWriter, r *http.Request, manager interfaces.IManag
 	}
 	response.Token = token.Value
 	return func() { router.SendJson(response, w) }
+}
+
+func CSRFTokenOptions(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
+	return func() {}
 }

@@ -24,7 +24,6 @@ import (
 	"github.com/uwine4850/pixarea/src/handlers/hpublication"
 	"github.com/uwine4850/pixarea/src/handlers/tmplfilters"
 	"github.com/uwine4850/pixarea/src/middlewares/securitymddll"
-	"github.com/uwine4850/pixarea/src/middlewares/usermddl"
 )
 
 func main() {
@@ -36,11 +35,11 @@ func main() {
 		}
 	}(db)
 	mddl := middlewares.NewMiddleware()
-	// mddl.HandlerMddl(0, authmddl.UpdKeys(db))
-	mddl.HandlerMddl(1, builtin_mddl.GenerateAndSetCsrf)
-	// mddl.HandlerMddl(2, authmddl.AuthPermissions)
-	mddl.AsyncHandlerMddl(securitymddll.Cors)
-	mddl.AsyncHandlerMddl(usermddl.ParseUserCookies)
+	mddl.HandlerMddl(0, securitymddll.Cors)
+	// mddl.HandlerMddl(1, authmddl.UpdKeys(db))
+	mddl.HandlerMddl(2, builtin_mddl.GenerateAndSetCsrf)
+	// mddl.HandlerMddl(3, authmddl.AuthPermissions)
+	// mddl.AsyncHandlerMddl(usermddl.ParseUserCookies)
 
 	render, err := tmlengine.NewRender()
 	if err != nil {
@@ -85,7 +84,8 @@ func main() {
 	newRouter.Post("/publication-comment-hide", hpublication.PublicationCommentHideHNDL)
 	newRouter.Get("/publication-load-answers", hpublication.LoadAnswersHNDL)
 	newRouter.Post("/api/login", authapi.LoginPostHNDL)
-	newRouter.Get("/api/csrf", tokenapi.CSRTToken)
+	newRouter.Get("/api/csrf", tokenapi.CSRFToken)
+	newRouter.Options("/api/csrf", tokenapi.CSRFTokenOptions)
 	gf := globalflow.NewGlobalFlow(10)
 	gf.AddNotWaitTask(bglobalflow.KeyUpdater(3600))
 	gf.Run(newManager)
