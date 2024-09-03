@@ -1,13 +1,19 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
+import { useNavigate } from 'react-router-dom';
 import { LayoutProvider, Layout } from "../LayoutContext";
+import ARequest from "../../scripts/request";
+import { useCsrfToken } from "../../scripts/csrf_token";
+import { CSRFTokenResponse } from "../../messages/csrf";
+import { SingleErrorResponse } from "../../messages/messages";
+import { checkType } from "../../scripts/typecheck";
 
-function getContent(onSubmit?: any) {
+function getContent(onSubmit?: any, error?: string) {
   return (
     <form
       className="auth-panel"
       onSubmit={onSubmit}
     >
-      <div className="error"></div>
+      <div className="error">{error}</div>
       <h2 className="auth-panel-title">Login</h2>
       <hr />
       <div className="form-block form-block-auth">
@@ -31,8 +37,36 @@ function getContent(onSubmit?: any) {
 }
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | undefined>(undefined);
+
+  const csrfTokenResult = useCsrfToken();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (checkType<CSRFTokenResponse>(csrfTokenResult as CSRFTokenResponse)) {
+      const csrf = csrfTokenResult as CSRFTokenResponse;
+      const formData = new FormData(event.currentTarget);
+      const data = {
+        username: formData.get('username'),
+        password: formData.get('password'),
+        CSRF_TOKEN: csrf?.Token,
+      };
+      const req = new ARequest<SingleErrorResponse, undefined>("POST", "http://localhost:8000/api/login", {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }, data);
+      const res = await req.send();
+      if (res?.Error == ""){
+        navigate("/");
+      } else {
+        setError(res?.Error);
+      }
+    } else {
+      const error = csrfTokenResult as SingleErrorResponse;
+      navigate(error.Redirect);
+    }
+  }
   return (
-    <LayoutProvider value={{ content: getContent() }}>
+    <LayoutProvider value={{ content: getContent(handleSubmit, error) }}>
       <Layout />
     </LayoutProvider>
   );

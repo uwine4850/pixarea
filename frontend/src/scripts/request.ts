@@ -1,4 +1,4 @@
-class ARequest<T> {
+class ARequest<T, U> {
   method: string;
   contentType?: string;
   url: string;
@@ -16,7 +16,7 @@ class ARequest<T> {
     this.data = data;
   }
 
-  public async send(): Promise<T> {
+  public async send(): Promise<T | U> {
     let body = null
     if (this.data){
       body = new URLSearchParams(this.data as any).toString()
@@ -33,8 +33,16 @@ class ARequest<T> {
         throw new Error("Request failed");
       }
 
-      const responseData: T = await response.json();
-      return responseData;
+      // const responseData: T = await response.json();
+      // return responseData;
+      try {
+        const responseData: T = await response.json();
+        return responseData as unknown as U; // Пробуем вернуть как T
+      } catch (jsonError) {
+        // Если возникла ошибка преобразования, используем второй тип
+        const fallbackData: U = await response.json();
+        return fallbackData;
+      }
 
     } catch (error) {
       throw new Error(String(error));

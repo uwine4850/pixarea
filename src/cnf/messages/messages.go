@@ -7,7 +7,8 @@ import (
 
 type SingleErrorResponse struct {
 	rest.InmplementDTOMessage
-	Error string
+	Error    string
+	Redirect string
 }
 
 type AuthLoginMessageRequest struct {
