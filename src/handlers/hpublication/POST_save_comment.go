@@ -9,6 +9,7 @@ import (
 	"github.com/uwine4850/foozy/pkg/router"
 	"github.com/uwine4850/foozy/pkg/router/form"
 	"github.com/uwine4850/foozy/pkg/router/form/formmapper"
+	"github.com/uwine4850/foozy/pkg/secure"
 	"github.com/uwine4850/foozy/pkg/typeopr"
 	"github.com/uwine4850/pixarea/src/cnf"
 	"github.com/uwine4850/pixarea/src/cnf/pnames"
@@ -34,7 +35,7 @@ func PublicationCommentHNDL(w http.ResponseWriter, r *http.Request, manager inte
 	}()
 
 	frm := form.NewForm(r)
-	if err := frm.ValidateCsrfToken(); err != nil {
+	if err := secure.ValidateFormCsrfToken(r, frm); err != nil {
 		return utils.SuccessJsonError(w, err)
 	}
 	comm, err := getComment(frm)

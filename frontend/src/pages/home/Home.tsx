@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from "react";
+import { useNavigate } from 'react-router-dom';
+import React from "react";
 import { LayoutProvider, Layout } from "../LayoutContext";
 import Header from "../components/Header";
-import {useCsrfToken} from "../../scripts/csrf_token";
+import { useCsrfToken, parseCSRFResponce, CSRFTokenInfer, SingleErrorInfer } from "../../scripts/csrf_token";
 
 const content = (
   <div className="content">
@@ -16,8 +17,17 @@ const content = (
 );
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
   const csrfToken = useCsrfToken();
-  console.log(csrfToken);
+  parseCSRFResponce(csrfToken, async function (csrfTokenResponce: CSRFTokenInfer) {
+    console.log(csrfTokenResponce);
+  },
+    async function (singleErrorResponse: SingleErrorInfer) {
+      if(singleErrorResponse.Redirect != ""){
+        navigate(singleErrorResponse.Redirect);
+      }
+    }
+  )
   return (
     <LayoutProvider
       value={{

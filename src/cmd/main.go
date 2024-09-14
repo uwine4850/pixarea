@@ -4,9 +4,11 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/rs/cors"
 	"github.com/uwine4850/foozy/pkg/builtin/bglobalflow"
 	"github.com/uwine4850/foozy/pkg/builtin/builtin_mddl"
 	"github.com/uwine4850/foozy/pkg/database"
+	"github.com/uwine4850/foozy/pkg/interfaces"
 	"github.com/uwine4850/foozy/pkg/router"
 	"github.com/uwine4850/foozy/pkg/router/manager"
 	"github.com/uwine4850/foozy/pkg/router/middlewares"
@@ -23,7 +25,7 @@ import (
 	"github.com/uwine4850/pixarea/src/handlers/hprofile"
 	"github.com/uwine4850/pixarea/src/handlers/hpublication"
 	"github.com/uwine4850/pixarea/src/handlers/tmplfilters"
-	"github.com/uwine4850/pixarea/src/middlewares/securitymddll"
+	"github.com/uwine4850/pixarea/src/middlewares/authmddl"
 )
 
 func main() {
@@ -35,10 +37,10 @@ func main() {
 		}
 	}(db)
 	mddl := middlewares.NewMiddleware()
-	mddl.HandlerMddl(0, securitymddll.Cors)
-	// mddl.HandlerMddl(1, authmddl.UpdKeys(db))
-	mddl.HandlerMddl(2, builtin_mddl.GenerateAndSetCsrf)
-	// mddl.HandlerMddl(3, authmddl.AuthPermissions)
+	// mddl.HandlerMddl(0, securitymddll.Cors)
+	mddl.HandlerMddl(1, authmddl.UpdKeys(db))
+	mddl.HandlerMddl(2, builtin_mddl.GenerateAndSetCsrf(1800, func(w http.ResponseWriter, r *http.Request, manager interfaces.IManager, err error) {}))
+	mddl.HandlerMddl(3, authmddl.AuthPermissions)
 	// mddl.AsyncHandlerMddl(usermddl.ParseUserCookies)
 
 	render, err := tmlengine.NewRender()
@@ -85,12 +87,16 @@ func main() {
 	newRouter.Get("/publication-load-answers", hpublication.LoadAnswersHNDL)
 	newRouter.Post("/api/login", authapi.LoginPostHNDL)
 	newRouter.Get("/api/csrf", tokenapi.CSRFToken)
-	newRouter.Options("/api/csrf", tokenapi.CSRFTokenOptions)
 	gf := globalflow.NewGlobalFlow(10)
 	gf.AddNotWaitTask(bglobalflow.KeyUpdater(3600))
 	gf.Run(newManager)
 
-	serv := server.NewServer(":8000", newRouter)
+	serv := server.NewServer(":8000", newRouter, &cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	})
 	err = serv.Start()
 	if err != nil && !errors.Is(http.ErrServerClosed, err) {
 		panic(err)

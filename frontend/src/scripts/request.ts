@@ -1,49 +1,56 @@
-class ARequest<T, U> {
+import { z, ZodType } from 'zod';
+
+class ARequest<T extends ZodType<any>, U extends ZodType<any>> {
   method: string;
   contentType?: string;
   url: string;
   header?: HeadersInit;
   data?: FormData;
+  private successSchema: T;
+  private errorSchema: U;
+
   constructor(
     method: string,
     url: string,
+    successSchema: T,
+    errorSchema: U,
     header?: HeadersInit,
     data?: any,
   ) {
     this.method = method;
     this.url = url;
+    this.successSchema = successSchema;
+    this.errorSchema = errorSchema;
     this.header = header;
     this.data = data;
   }
 
   public async send(): Promise<T | U> {
-    let body = null
-    if (this.data){
-      body = new URLSearchParams(this.data as any).toString()
+    let body = null;
+    if (this.data) {
+      body = new URLSearchParams(this.data as any).toString();
     }
-    try { 
+
+    try {
       const response = await fetch(this.url, {
         method: this.method,
         headers: this.header,
         body: body,
-        credentials: "include",
+        credentials: 'include',
       });
 
       if (!response.ok) {
-        throw new Error("Request failed");
+        throw new Error('Request failed');
       }
 
-      // const responseData: T = await response.json();
-      // return responseData;
+      const responseData = await response.json();
+      console.log(responseData);
+
       try {
-        const responseData: T = await response.json();
-        return responseData as unknown as U; // Пробуем вернуть как T
-      } catch (jsonError) {
-        // Если возникла ошибка преобразования, используем второй тип
-        const fallbackData: U = await response.json();
-        return fallbackData;
+        return this.successSchema.parse(responseData);
+      } catch (successValidationError) {
+        return this.errorSchema.parse(responseData);
       }
-
     } catch (error) {
       throw new Error(String(error));
     }

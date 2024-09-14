@@ -15,14 +15,18 @@
     "react-router-dom": "^6.26.1",
     "react-scripts": "5.0.1",
     "sass": "^1.77.8",
+    "ts-to-zod": "^3.13.0",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "zod": "^3.23.8"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "buildzod": "tsc ./src/scripts/schema/ts_to_zod.ts",
+    "genzod": "node ./src/scripts/schema/ts_to_zod.js"
   },
   "eslintConfig": {
     "extends": [

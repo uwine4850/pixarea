@@ -2,10 +2,9 @@ import React, {useState, useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
 import { LayoutProvider, Layout } from "../LayoutContext";
 import ARequest from "../../scripts/request";
-import { useCsrfToken } from "../../scripts/csrf_token";
-import { CSRFTokenResponse } from "../../messages/csrf";
-import { SingleErrorResponse } from "../../messages/messages";
-import { checkType } from "../../scripts/typecheck";
+import { useCsrfToken, parseCSRFResponce, CSRFTokenInfer, SingleErrorInfer } from "../../scripts/csrf_token";
+import { cSRFTokenResponseSchema } from "../../messages/schemas/csrf.schemas";
+import { singleErrorResponseSchema } from "../../messages/schemas/error.schemas";
 
 function getContent(onSubmit?: any, error?: string) {
   return (
@@ -43,27 +42,31 @@ const Login: React.FC = () => {
   const csrfTokenResult = useCsrfToken();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (checkType<CSRFTokenResponse>(csrfTokenResult as CSRFTokenResponse)) {
-      const csrf = csrfTokenResult as CSRFTokenResponse;
-      const formData = new FormData(event.currentTarget);
-      const data = {
-        username: formData.get('username'),
-        password: formData.get('password'),
-        CSRF_TOKEN: csrf?.Token,
-      };
-      const req = new ARequest<SingleErrorResponse, undefined>("POST", "http://localhost:8000/api/login", {
-        "Content-Type": "application/x-www-form-urlencoded"
-      }, data);
-      const res = await req.send();
-      if (res?.Error == ""){
-        navigate("/");
-      } else {
-        setError(res?.Error);
+    await parseCSRFResponce(csrfTokenResult, async function (csrfTokenResponce: CSRFTokenInfer) {
+      const parseResult = cSRFTokenResponseSchema.safeParse(csrfTokenResponce);
+      if(parseResult.success){
+        const formData = new FormData(event.currentTarget);
+        const data = {
+          username: formData.get('username'),
+          password: formData.get('password'),
+          CSRF_TOKEN: csrfTokenResponce?.Token,
+        };
+        const req = new ARequest("POST", "http://localhost:8000/api/login", singleErrorResponseSchema, singleErrorResponseSchema, {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }, data);
+        const res = await req.send();
+        const response = singleErrorResponseSchema.parse(res);
+        if (response?.Error == ""){
+          navigate("/");
+        } else {
+          setError(response?.Error);
+        }
       }
-    } else {
-      const error = csrfTokenResult as SingleErrorResponse;
-      navigate(error.Redirect);
-    }
+    },
+      async function (singleErrorResponse: SingleErrorInfer) {
+        navigate(singleErrorResponse.Redirect);
+      }
+    )
   }
   return (
     <LayoutProvider value={{ content: getContent(handleSubmit, error) }}>

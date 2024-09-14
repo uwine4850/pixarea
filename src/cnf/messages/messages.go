@@ -6,19 +6,19 @@ import (
 )
 
 type SingleErrorResponse struct {
-	rest.InmplementDTOMessage
+	rest.ImplementDTOMessage
 	Error    string
 	Redirect string
 }
 
 type AuthLoginMessageRequest struct {
-	rest.InmplementDTOMessage
+	rest.ImplementDTOMessage
 	Username string
 	Password string
 }
 
 type CSRFTokenResponse struct {
-	rest.InmplementDTOMessage
+	rest.ImplementDTOMessage
 	Token string
 	Error string
 }
@@ -39,11 +39,13 @@ var AllowedMessages = []rest.AllowMessage{
 }
 
 var MessagesList = map[string]*[]irest.IMessage{
-	"frontend/src/messages/messages.ts": {
+	"frontend/src/messages/error.ts": {
 		SingleErrorResponse{},
-		AuthLoginMessageRequest{},
 	},
 	"frontend/src/messages/csrf.ts": {
 		CSRFTokenResponse{},
+	},
+	"frontend/src/messages/auth.ts": {
+		AuthLoginMessageRequest{},
 	},
 }
