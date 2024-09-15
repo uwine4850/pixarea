@@ -20,7 +20,7 @@ func AuthPermissions(w http.ResponseWriter, r *http.Request, manager interfaces.
 		sendError(&singleErrorResponse, w, manager.OneTimeData())
 		return
 	}
-	if fslice.SliceContains([]string{"/login", "/login-post", "/register", "/register-post", "/api/login", "/api/csrf"}, urlPattern.(string)) {
+	if fslice.SliceContains([]string{"/login", "/login-post", "/register", "/register-post", "/api/login", "/api/csrf", "/api/register"}, urlPattern.(string)) {
 		return
 	}
 	for i := 0; i < len(r.Cookies()); i++ {

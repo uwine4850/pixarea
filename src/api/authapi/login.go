@@ -1,7 +1,6 @@
 package authapi
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -12,7 +11,6 @@ import (
 	"github.com/uwine4850/foozy/pkg/interfaces/itypeopr"
 	"github.com/uwine4850/foozy/pkg/router"
 	"github.com/uwine4850/foozy/pkg/router/cookies"
-	"github.com/uwine4850/foozy/pkg/router/form"
 	"github.com/uwine4850/foozy/pkg/router/form/formmapper"
 	"github.com/uwine4850/foozy/pkg/typeopr"
 	"github.com/uwine4850/pixarea/src/cnf"
@@ -24,17 +22,6 @@ import (
 type LoginForm struct {
 	Username []string `form:"username"`
 	Password []string `form:"password"`
-}
-
-func Login(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {
-	response := messages.SingleErrorResponse{}
-	frm := form.NewForm(r)
-	if err := frm.Parse(); err != nil {
-		response.Error = err.Error()
-		return func() { router.SendJson(response, w) }
-	}
-	fmt.Println(frm.GetApplicationForm())
-	return func() { router.SendJson(response, w) }
 }
 
 func LoginPostHNDL(w http.ResponseWriter, r *http.Request, manager interfaces.IManager) func() {

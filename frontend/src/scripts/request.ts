@@ -44,8 +44,6 @@ class ARequest<T extends ZodType<any>, U extends ZodType<any>> {
       }
 
       const responseData = await response.json();
-      console.log(responseData);
-
       try {
         return this.successSchema.parse(responseData);
       } catch (successValidationError) {
